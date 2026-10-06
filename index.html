@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FBF5EE">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="PawSteps">
+<title>PawSteps · Daily Dog Training</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%BE%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<style>
+:root{
+  --bg:#FBF5EE; --card:#FFFFFF; --ink:#2E2A3B; --muted:#6F6A7D; --line:#EFE6DA;
+  --primary:#E07A5F; --primary-d:#C9603F; --primary-l:#FBE3DA;
+  --green:#5FA383; --green-l:#DDF0E6; --amber:#F2B45A; --amber-l:#FCEBCF;
+  --coral:#E36B6B; --coral-l:#FADADA; --navy:#3D405B; --sand:#F4ECE1;
+  --radius:18px; --shadow:0 1px 2px rgba(61,64,91,.06),0 6px 20px rgba(61,64,91,.07);
+  --font: ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,h4{line-height:1.2;margin:0}
+a{color:var(--primary-d)}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Layout */
+.app{min-height:100vh;padding-bottom:92px}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(251,245,238,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.05rem;letter-spacing:-.01em}
+.brand .logo{width:34px;height:34px;border-radius:11px;background:var(--primary);display:grid;place-items:center;font-size:19px;box-shadow:0 3px 10px rgba(224,122,95,.35)}
+.brand small{display:block;font-weight:600;color:var(--muted);font-size:.75rem;margin-top:-2px}
+.streak-pill{margin-left:auto;display:flex;align-items:center;gap:4px;background:var(--amber-l);color:#8a5a12;font-weight:800;border-radius:999px;padding:5px 11px;font-size:.88rem}
+.main{max-width:1120px;margin:0 auto;padding:16px}
+
+/* Nav */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(61,64,91,.06)}
+.nav button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px;border-radius:12px;color:var(--muted);font-size:.72rem;font-weight:700}
+.nav button .ic{font-size:1.35rem;line-height:1;filter:grayscale(.6);opacity:.8;transition:transform .15s}
+.nav button.active{color:var(--primary-d);background:var(--primary-l)}
+.nav button.active .ic{filter:none;opacity:1;transform:translateY(-1px)}
+.topnav{display:none}
+@media (min-width:900px){
+  .app{padding-bottom:30px}
+  .nav{display:none}
+  .topnav{display:flex;gap:4px;margin-left:24px}
+  .topnav button{background:none;border:0;padding:8px 14px;border-radius:999px;font-weight:700;color:var(--muted);display:flex;gap:6px;align-items:center}
+  .topnav button:hover{background:var(--sand)}
+  .topnav button.active{background:var(--primary);color:#fff}
+  .main{padding:24px}
+}
+
+/* Cards & generic */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;border:1px solid rgba(239,230,218,.7)}
+.card h3{font-size:1.02rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h3 .h-ic{font-size:1.1rem}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;background:var(--sand);font-size:.8rem;font-weight:700;color:var(--navy);white-space:nowrap}
+.chip.p{background:var(--primary-l);color:var(--primary-d)}
+.chip.g{background:var(--green-l);color:#2f7255}
+.chip.a{background:var(--amber-l);color:#8a5a12}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;background:var(--primary);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .08s,background .15s;min-height:44px}
+.btn:hover{background:var(--primary-d)}
+.btn:active{transform:scale(.97)}
+.btn.sec{background:var(--sand);color:var(--navy)}
+.btn.sec:hover{background:#ece1d2}
+.btn.ghost{background:transparent;color:var(--navy);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--sand)}
+.btn.green{background:var(--green)}
+.btn.green:hover{background:#4c8c6e}
+.btn.danger{background:var(--coral)}
+.btn.sm{padding:7px 12px;min-height:36px;font-size:.88rem;border-radius:10px}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.icon-btn{width:44px;height:44px;border-radius:14px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;font-size:1.2rem;font-weight:800;color:var(--navy)}
+.icon-btn:disabled{opacity:.35}
+input[type=text],input[type=date],input[type=search],select,textarea,input[type=number]{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;min-height:46px}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-l)}
+textarea{min-height:96px;resize:vertical}
+label.f{display:block;font-weight:700;font-size:.9rem;margin:12px 0 6px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.seg button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:10px 4px;font-weight:700;font-size:.86rem;display:flex;flex-direction:column;align-items:center;gap:2px}
+.seg button .e{font-size:1.4rem}
+.seg button.on{border-color:var(--primary);background:var(--primary-l);color:var(--primary-d)}
+
+/* Onboarding */
+.onb{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(1200px 600px at 10% -10%,#FBE3DA 0,transparent 60%),radial-gradient(900px 500px at 110% 110%,#DDF0E6 0,transparent 55%),var(--bg)}
+.onb .card{max-width:460px;width:100%;padding:24px}
+.onb .hero-emoji{font-size:54px;text-align:center;margin-bottom:4px}
+.onb h1{text-align:center;font-size:1.6rem;letter-spacing:-.02em}
+.onb p.lead{text-align:center;color:var(--muted);margin:6px 0 10px}
+
+/* Today */
+.day-hero{background:var(--phase,#E07A5F);background:linear-gradient(135deg,var(--phase,#E07A5F) 0%,var(--phase2,#B0563F) 100%);color:#fff;border-radius:22px;padding:18px;box-shadow:0 10px 30px rgba(61,64,91,.18);margin-bottom:14px;position:relative;overflow:hidden}
+.day-hero::after{content:"🐾";position:absolute;right:-8px;bottom:-22px;font-size:110px;opacity:.12;transform:rotate(-18deg);pointer-events:none}
+.day-hero .nav-row{display:flex;align-items:center;gap:10px}
+.day-hero .icon-btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.28);color:#fff;flex:none}
+.day-hero .icon-btn:disabled{opacity:.3}
+.day-hero .kicker{font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;opacity:.9}
+.day-hero h1{font-size:1.45rem;letter-spacing:-.02em;margin-top:2px}
+.day-hero .center{flex:1;text-align:center;min-width:0}
+.day-hero .lesson{margin-top:14px;display:flex;gap:12px;align-items:flex-start;position:relative;z-index:1}
+.day-hero .lesson .big{font-size:2.1rem;width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex:none}
+.day-hero h2{font-size:1.25rem;letter-spacing:-.01em}
+.day-hero p{margin:4px 0 0;opacity:.95;font-size:.95rem}
+.day-hero .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;position:relative;z-index:1}
+.day-hero .chip{background:rgba(255,255,255,.2);color:#fff}
+.today-link{display:block;margin:10px auto 0;background:rgba(255,255,255,.95);color:var(--navy);border:0;border-radius:999px;padding:6px 14px;font-weight:800;font-size:.85rem;position:relative;z-index:1}
+.banner{border-radius:14px;padding:12px 14px;font-size:.92rem;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start}
+.banner.info{background:#E8EEF9;color:#2f3e66}
+.banner.warm{background:var(--amber-l);color:#6d4610}
+.banner.good{background:var(--green-l);color:#235a42}
+.today-grid{display:grid;gap:0}
+@media (min-width:900px){
+  .today-grid{grid-template-columns:minmax(0,1fr) 370px;grid-template-rows:auto 1fr;grid-template-areas:'main top' 'main bot';column-gap:20px;align-items:start}
+  .t-main{grid-area:main}.t-top{grid-area:top}.t-bot{grid-area:bot}
+}
+.sessions{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:10px}
+.sess{border:2px dashed #E3D6C5;background:#FFFCF8;border-radius:16px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:800;color:var(--muted);transition:all .15s;min-height:84px;justify-content:center}
+.sess .box{width:30px;height:30px;border-radius:10px;border:2px solid #D9C9B4;display:grid;place-items:center;font-size:1rem;background:#fff;color:transparent;transition:all .15s}
+.sess.done{border-style:solid;border-color:var(--green);background:var(--green-l);color:#2f7255}
+.sess.done .box{background:var(--green);border-color:var(--green);color:#fff}
+.sess small{font-weight:600;font-size:.72rem}
+.meter{height:10px;background:var(--sand);border-radius:99px;overflow:hidden}
+.meter > i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--amber));border-radius:99px;transition:width .4s}
+.meter.g > i{background:linear-gradient(90deg,var(--green),#8fcfae)}
+
+/* Timer */
+.timer{display:flex;align-items:center;gap:16px}
+.ring{position:relative;width:118px;height:118px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .t{position:absolute;inset:0;display:grid;place-items:center;font-size:1.65rem;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.ring .t small{display:block;font-size:.68rem;color:var(--muted);font-weight:700;text-align:center;letter-spacing:0;margin-top:-4px}
+.timer-ctrls{display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.timer-ctrls .row{gap:6px;flex-wrap:nowrap}
+.timer-ctrls .row .btn{flex:1;padding-left:4px;padding-right:4px;white-space:nowrap;font-size:.84rem}
+.timer.finished .ring .t{color:var(--green)}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.timer.finished .ring{animation:pulse 1s ease-in-out 3}
+
+/* Lesson content */
+.steps{list-style:none;padding:0;margin:0;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:0 0 14px 44px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:50%;background:var(--primary-l);color:var(--primary-d);font-weight:800;display:grid;place-items:center;font-size:.9rem}
+.steps li:not(:last-child)::after{content:"";position:absolute;left:14px;top:30px;bottom:2px;width:2px;background:var(--primary-l)}
+.ticks{list-style:none;padding:0;margin:0}
+.ticks li{padding:4px 0 4px 28px;position:relative}
+.ticks li::before{content:"✅";position:absolute;left:0;top:4px;font-size:.95rem}
+.ticks.warn li::before{content:"⚠️"}
+.need{display:flex;flex-wrap:wrap;gap:6px}
+.need .chip{background:#F7F1E8;font-weight:600;white-space:normal}
+.levelup{background:linear-gradient(135deg,#FFF6E6,#FDEBDD);border:1px solid #F6DDBF}
+.age-tip{background:#F1EEF8;color:#433a63;border-radius:14px;padding:12px 14px;font-size:.9rem;margin-bottom:14px}
+.skill-tags{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Rating */
+.rating{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rating button{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;font-weight:700;font-size:.82rem;gap:2px}
+.rating button .e{font-size:1.6rem}
+.rating button.on[data-v="1"]{border-color:var(--coral);background:var(--coral-l);color:#a23c3c}
+.rating button.on[data-v="2"]{border-color:var(--amber);background:var(--amber-l);color:#8a5a12}
+.rating button.on[data-v="3"]{border-color:var(--green);background:var(--green-l);color:#2f7255}
+.saved{font-size:.78rem;color:var(--green);font-weight:700;opacity:0;transition:opacity .3s}
+.saved.show{opacity:1}
+
+/* Heatmap */
+.heat{max-width:560px;display:grid;grid-template-columns:auto repeat(7,1fr);gap:6px;align-items:center}
+.heat .wk{font-size:.72rem;font-weight:800;color:var(--muted);padding-right:4px;white-space:nowrap}
+.cell{aspect-ratio:1;border-radius:10px;border:0;background:#F1EADF;font-size:.8rem;font-weight:800;color:#9a8f80;display:grid;place-items:center;position:relative;padding:0;min-width:0}
+.cell.done{background:var(--green);color:#fff}
+.cell.partial{background:var(--amber);color:#fff}
+.cell.struggled{background:var(--coral);color:#fff}
+.cell.missed{background:#fff;border:1.5px dashed #D9CBB8}
+.cell.today{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--navy)}
+.cell.viewing{outline:2px solid var(--primary);outline-offset:2px}
+.cell .tag{position:absolute;top:-6px;right:-5px;font-size:.7rem;line-height:1}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:.78rem;color:var(--muted);font-weight:600}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;background:#F1EADF}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+@media (min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:#fff;border-radius:16px;padding:14px;box-shadow:var(--shadow);border:1px solid rgba(239,230,218,.7)}
+.stat .v{font-size:1.7rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.stat .l{font-size:.8rem;color:var(--muted);font-weight:700}
+.stat .e{font-size:1.25rem;float:right}
+.two-col{display:grid;gap:0}
+@media (min-width:900px){.two-col{grid-template-columns:1fr 1fr;gap:18px;align-items:start}}
+
+/* Program list */
+.week{margin-bottom:14px}
+.week-head{display:flex;align-items:center;gap:10px;margin:18px 2px 8px}
+.week-head .num{width:36px;height:36px;border-radius:12px;color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.week-head h3{font-size:1.02rem}
+.day-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:1px solid rgba(239,230,218,.9);border-radius:14px;padding:10px 12px;margin-bottom:6px;box-shadow:0 1px 2px rgba(61,64,91,.04)}
+.day-row:hover{border-color:#e6d6c2}
+.day-row .dn{width:40px;flex:none;text-align:center;font-weight:800;color:var(--muted);font-size:.72rem;line-height:1.1}
+.day-row .dn b{display:block;font-size:1.1rem;color:var(--ink)}
+.day-row .em{font-size:1.4rem;flex:none}
+.day-row .tt{flex:1;min-width:0}
+.day-row .tt b{display:block;font-size:.95rem;line-height:1.25;margin-bottom:2px}
+.day-row .tt span{font-size:.78rem;color:var(--muted)}
+.status{font-size:.72rem;font-weight:800;padding:3px 8px;border-radius:999px;flex:none;background:var(--sand);color:var(--muted)}
+.status.done{background:var(--green-l);color:#2f7255}
+.status.partial{background:var(--amber-l);color:#8a5a12}
+.status.struggled{background:var(--coral-l);color:#a23c3c}
+.status.today{background:var(--navy);color:#fff}
+.day-row.is-today{border:2px solid var(--navy)}
+
+/* Skills */
+.skill-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.skill-row:last-child{border-bottom:0}
+.skill-row .em{font-size:1.35rem;width:38px;height:38px;border-radius:12px;background:var(--sand);display:grid;place-items:center;flex:none}
+.skill-row .nm{flex:1;min-width:0}
+.skill-row .nm b{display:block;font-size:.95rem}
+.skill-row .nm span{font-size:.76rem;color:var(--muted)}
+.mbtn{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font-weight:800;font-size:.78rem;white-space:nowrap;min-height:34px}
+.mbtn.on{background:var(--green);border-color:var(--green);color:#fff}
+.filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin:10px 0 4px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filters button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-weight:700;font-size:.84rem;white-space:nowrap}
+.filters button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+details.lib{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;border:1px solid rgba(239,230,218,.7);overflow:hidden}
+details.lib > summary{list-style:none;display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer}
+details.lib > summary::-webkit-details-marker{display:none}
+details.lib > summary .em{font-size:1.5rem;width:46px;height:46px;border-radius:14px;background:var(--sand);display:grid;place-items:center;flex:none}
+details.lib > summary .nm{flex:1;min-width:0}
+details.lib > summary .nm b{display:block}
+details.lib > summary .nm span{font-size:.82rem;color:var(--muted);display:block}
+details.lib > summary .chev{transition:transform .2s;color:var(--muted);font-weight:800}
+details.lib[open] > summary .chev{transform:rotate(90deg)}
+.lib-body{padding:0 16px 16px}
+.lib-day{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.lib-day h4{font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lib-day .sub{font-weight:800;font-size:.82rem;color:var(--navy);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.04em}
+.lib-day ol{margin:0;padding-left:20px}
+.lib-day ol li{margin-bottom:4px}
+.basics{display:grid;gap:10px}
+@media (min-width:700px){.basics{grid-template-columns:1fr 1fr}}
+.basics div{background:#FFFCF8;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.88rem}
+.basics b{display:block;margin-bottom:2px}
+.empty{text-align:center;color:var(--muted);padding:24px}
+
+/* Journal */
+.journal-item{border-left:3px solid var(--primary-l);padding:4px 0 4px 12px;margin-bottom:12px}
+.journal-item b{font-size:.88rem}
+.journal-item p{margin:2px 0 0;font-size:.9rem;white-space:pre-wrap;word-wrap:break-word}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:11px 18px;border-radius:14px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:all .25s;z-index:60;max-width:calc(100% - 32px);text-align:center;font-size:.92rem}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (min-width:900px){.toast{bottom:30px}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+.confetti span{position:absolute;top:-40px;font-size:24px;animation:fall 1.8s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.8}}
+.page-title{font-size:1.5rem;letter-spacing:-.02em;margin:4px 2px 4px}
+.page-sub{color:var(--muted);margin:0 2px 14px}
+.ring-big{display:flex;align-items:center;gap:18px}
+.footer-note{text-align:center;color:var(--muted);font-size:.78rem;margin:24px 0 8px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript><p style="padding:20px;font-family:sans-serif">PawSteps needs JavaScript enabled to run.</p></noscript>
+<script>
+/* ===================== PROGRAM CONTENT ===================== */
+const SKILLS = [
+  {id:"marker", name:"Marker Word / Clicker", emoji:"🔔", cat:"Foundations", cue:"“Yes!” or click",
+   summary:"A unique sound that tells {dog} “that exact thing you just did earns a reward.”",
+   why:"A marker lets you pinpoint the precise moment {dog} gets it right, which makes learning faster and clearer than praise alone."},
+  {id:"name", name:"Name Recognition", emoji:"📛", cat:"Foundations", cue:"{dog}’s name",
+   summary:"Hearing their name means “look at me — good things happen.”",
+   why:"A fast, happy head-turn to their name is the starting point for every other cue and for calling {dog} away from trouble."},
+  {id:"focus", name:"Eye Contact & Focus", emoji:"👀", cat:"Foundations", cue:"“Look” (and voluntary check-ins)",
+   summary:"Offering and holding soft eye contact, and checking in with you on their own.",
+   why:"Attention is the gateway skill: a dog who checks in with you is ready to listen and easier to guide around distractions."},
+  {id:"touch", name:"Hand Target (Touch)", emoji:"✋", cat:"Foundations", cue:"“Touch”",
+   summary:"Bumping their nose into your open palm on cue.",
+   why:"Touch is an easy, upbeat way to move {dog} anywhere — off the couch, past a distraction, or back to you — without pulling or pushing."},
+  {id:"sit", name:"Sit", emoji:"🪑", cat:"Foundations", cue:"“Sit” + raised palm",
+   summary:"Rear on the floor until released.",
+   why:"Sit is a simple, polite default — a way to ‘say please’ for meals, doors, and greetings."},
+  {id:"down", name:"Down", emoji:"⬇️", cat:"Foundations", cue:"“Down” + flat palm toward floor",
+   summary:"Lying down with elbows on the floor until released.",
+   why:"Down is a calmer, more stable position — the base for settling, longer stays, and relaxing in public."},
+  {id:"recall", name:"Come (Recall)", emoji:"🏃", cat:"Life Skills", cue:"“{dog}, come!” (or “Here!”)",
+   summary:"Running straight back to you, every time, when called.",
+   why:"A reliable recall is one of the most important safety skills a dog can have — and it gives {dog} more freedom."},
+  {id:"leaveit", name:"Leave It", emoji:"🚫", cat:"Impulse Control", cue:"“Leave it”",
+   summary:"Turning away from something they want, and getting rewarded for it.",
+   why:"Leave it protects {dog} from dropped medication, trash, and other hazards, and builds self-control."},
+  {id:"dropit", name:"Drop It", emoji:"🦴", cat:"Impulse Control", cue:"“Drop”",
+   summary:"Happily letting go of whatever is in their mouth.",
+   why:"Drop it keeps {dog} safe when they pick up something dangerous and keeps games of tug fun and fair — without chasing or prying."},
+  {id:"lll", name:"Loose-Leash Walking", emoji:"🦮", cat:"Life Skills", cue:"“Let’s go” / “This way!”",
+   summary:"Walking near you with a relaxed, J-shaped leash.",
+   why:"Pulling is uncomfortable and stressful for both ends of the leash. Loose-leash walks are safer, calmer, and more fun."},
+  {id:"stay", name:"Stay (3 Ds)", emoji:"🧘", cat:"Impulse Control", cue:"“Stay” + flat palm, released with “Free!”",
+   summary:"Holding a position until released, built through Duration, Distance and Distraction.",
+   why:"Stay keeps {dog} safe and in place — while you open the door, unload groceries, or a guest comes in."},
+  {id:"place", name:"Place / Mat", emoji:"🛏️", cat:"Calm & Comfort", cue:"“Place”",
+   summary:"Going to a mat or bed and lying down there until released.",
+   why:"Place gives {dog} a clear job when life gets busy — doorbells, dinner time, guests — instead of jumping or begging."},
+  {id:"wait", name:"Wait at Doors", emoji:"🚪", cat:"Impulse Control", cue:"“Wait”",
+   summary:"Pausing at doors, gates and thresholds until invited through.",
+   why:"Waiting at doors prevents door-dashing, one of the most common ways dogs get lost or hurt."},
+  {id:"settle", name:"Settle / Calm", emoji:"😌", cat:"Calm & Comfort", cue:"“Settle”",
+   summary:"Relaxing and switching off — at home and out in the world.",
+   why:"Calm is a skill that can be practiced. Dogs who can settle cope better with busy homes, vet visits, cafés and travel."},
+  {id:"greet", name:"Polite Greetings", emoji:"👋", cat:"Life Skills", cue:"Four paws on the floor (or “Sit”) to say hi",
+   summary:"Greeting people with all four paws on the floor instead of jumping.",
+   why:"Jumping is natural — dogs want to say hi up close — but it can knock over kids and older adults. We teach a better way to get attention."},
+  {id:"crate", name:"Crate & Alone-Time Comfort", emoji:"🏠", cat:"Calm & Comfort", cue:"“Bedtime” / “Crate”",
+   summary:"Feeling safe and relaxed in a crate or safe area, and being home alone.",
+   why:"Being comfortable alone and in a crate makes vet stays, travel, and everyday life far less stressful for {dog}."},
+  {id:"spin", name:"Spin", emoji:"🌀", cat:"Tricks", cue:"“Spin” + circling finger",
+   summary:"Turning a full circle on cue.",
+   why:"Tricks are a fun, low-pressure way to build your communication — and a great confidence booster."},
+  {id:"paw", name:"Shake / Paw", emoji:"🐾", cat:"Tricks", cue:"“Paw” or “Shake”",
+   summary:"Placing a paw in your open hand.",
+   why:"A classic crowd-pleaser that also helps {dog} get comfortable having their paws handled (useful for nail trims!)."},
+  {id:"rollover", name:"Roll Over", emoji:"🔄", cat:"Tricks", cue:"“Roll over” + rolling hand motion",
+   summary:"Rolling all the way over from a down.",
+   why:"A multi-step trick that teaches you to break a behavior into small pieces — and it’s just plain fun."}
+];
+
+const PHASES = [
+  {week:1, name:"Foundations", tag:"Focus & communication", color:"#E07A5F"},
+  {week:2, name:"Everyday Life Skills", tag:"Recall, leash & self-control", color:"#E59A4B"},
+  {week:3, name:"Building Self-Control", tag:"Doors, mats & greetings", color:"#6FA58A"},
+  {week:4, name:"Proofing the 3 Ds", tag:"Duration, distance, distraction", color:"#4F8A7A"},
+  {week:5, name:"Combining Skills", tag:"Real distractions & tricks", color:"#6C7AA6"},
+  {week:6, name:"Real-World Ready", tag:"Field trips & graduation", color:"#9C6EA3"}
+];
+
+const AGE_NOTES = {
+  puppy:"🐶 Puppy tip: keep sessions to 1–3 minutes, train after a nap (not when overtired), and always end on a success. Use soft surfaces, skip repetitive jumping, and make new experiences safe and positive — socialization is time-sensitive.",
+  adolescent:"🧑‍🎤 Adolescent tip: dogs between about 6 and 18 months often seem to ‘forget’ skills — that’s normal brain development, not defiance. Lower your criteria in new places, use your best treats, and meet {dog}’s exercise and sniffing needs before you train.",
+  adult:"🐕 Adult tip: adult dogs learn new skills just as well as puppies. If a cue word has a bad history (like a “Come!” that’s been yelled), simply pick a fresh word.",
+  senior:"🦳 Senior tip: keep sessions short and low-impact, train on soft, non-slip surfaces, and skip or modify roll over and anything with jumping. Ask your vet about pain — discomfort can look like ‘stubbornness’. Use small, soft treats and watch daily calories."
+};
+
+const BASICS = [
+  ["Use tiny, tasty treats","Pea-sized, soft, smelly treats (chicken, cheese, commercial training treats) keep sessions moving. Use part of {dog}’s daily food allowance to avoid weight gain."],
+  ["Mark, then treat","Say your marker (“Yes!”) at the exact moment {dog} does the right thing, then deliver the treat within a second or two."],
+  ["Short and sweet","Several 3–5 minute sessions beat one long one. Stop while {dog} is still keen."],
+  ["Say cues once","Repeating a cue teaches {dog} to wait for the third ask. If they don’t respond, make it easier rather than louder."],
+  ["Make it easier, not harder","If {dog} struggles twice in a row, lower your criteria — less distance, less time, a quieter room."],
+  ["Change one thing at a time","When you add distance, keep duration and distraction easy (and vice versa)."],
+  ["No punishment","Skip leash pops, yelling, spray bottles, ‘alpha rolls’ and shock/prong collars. Reward what you want, manage what you don’t."],
+  ["Watch for stress","Yawning, lip-licking, turning away, whale eye, or refusing food mean {dog} is uncomfortable. Take a break or make things easier."],
+  ["Get help when needed","For growling, guarding, lunging, or panic when alone, consult a certified force-free trainer (e.g. CPDT-KA, KPA-CTP) or a veterinary behaviorist."]
+];
+
+const T = "Tiny soft treats (pea-sized)", POUCH="Treat pouch or pocket", CLICK="Clicker (optional)", LEASH="4–6 ft flat leash", HARN="Well-fitted harness", MAT="Mat, towel or dog bed", QUIET="Quiet room";
+const DAYS = [];
+
+DAYS.push(
+{skill:"marker", title:"Charge Your Marker Word", goal:"Teach {dog} that “Yes!” (or a click) always means a treat is coming.",
+ why:"Your marker is how you’ll talk to {dog} for the rest of the program. Once it predicts food, it becomes a powerful “that’s it!” signal that makes every new skill faster to learn.",
+ need:[T,POUCH,CLICK,QUIET], sessions:3, minutes:3, reps:"10–15 reps per session",
+ steps:["Prepare 15–20 tiny, soft treats and sit or stand in a quiet room with {dog}.","Say “Yes!” in a bright, consistent tone (or click once), then give a treat within 1–2 seconds.","Keep your hands still until AFTER the marker. The word — not your hand moving to the treat pouch — should be what predicts food.","Repeat 10–15 times at random intervals, whether {dog} is looking at you or not. {dog} doesn’t have to do anything yet.","Test it: when {dog} is mildly distracted (sniffing the floor), say “Yes!”. A quick head-whip toward you means the marker is charged."],
+ success:["{dog} turns toward you immediately when they hear the marker, 4 out of 5 times.","{dog} looks expectant (perks up, looks at your hands or face) as soon as you mark."],
+ mistakes:["Reaching for treats before saying the marker — the hand movement becomes the signal instead.","Using “Yes” in everyday conversation. If that’s hard for your household, choose a unique word like “Yip!” or use a clicker.","Marking without paying. Every marker = a treat, even if you marked by accident.","Shouting the marker. A clear, happy, normal voice is best."],
+ levelUp:"Charge the marker in two other rooms, or charge a clicker as a second marker."},
+{skill:"name", title:"The Name Game", goal:"{dog} whips their head toward you every time they hear their name.",
+ why:"Their name is your attention-getter. If it reliably means ‘look at me, good things happen’, you can interrupt and redirect {dog} before you need any other cue.",
+ need:[T,POUCH,QUIET], sessions:3, minutes:3, reps:"10 reps per session",
+ steps:["Start close to {dog} in a quiet room, when they’re not busy with something else.","Say {dog}’s name once, in a happy voice.","The instant {dog} looks at you, mark “Yes!” and treat.","If they don’t look within 2 seconds, make a kissy noise or crouch down — don’t repeat the name. Mark and treat when they look.","Wait until {dog} looks away, then repeat. As they improve, say the name while you’re a few steps away or while they’re sniffing a toy."],
+ success:["{dog} turns their head toward you within 1 second, 8 out of 10 times in a quiet room."],
+ mistakes:["Repeating the name over and over — this teaches {dog} to tune you out.","Using their name when scolding or before unpleasant things (bath, nail trims). Go get {dog} instead.","Jumping to hard situations (squirrels!) too early. Build the habit in easy places first."],
+ levelUp:"Say {dog}’s name from another room — reward when they come find you."},
+{skill:"focus", title:"Eye Contact & Check-Ins", goal:"{dog} offers and holds soft eye contact for 3 seconds, even with food in view.",
+ why:"Eye contact is the foundation of focus. A dog who checks in on their own is a dog who’s ready to listen — especially around distractions later on.",
+ need:[T,POUCH,QUIET], sessions:3, minutes:4, reps:"8–10 reps per session",
+ steps:["Hold a treat in your hand, out to the side at arm’s length. {dog} will probably stare at it — that’s fine. Stay silent and still.","Wait. The moment {dog} glances from the treat to your face, mark “Yes!” and give the treat.","Repeat until {dog} looks at your face quickly. Then wait for 1 second of eye contact before marking, then 2, then 3.","Once it’s reliable, say “Look” just before you hold your hand out.","Throughout the day, mark and reward any time {dog} checks in with you on their own (capturing)."],
+ success:["{dog} holds eye contact for 3 seconds while you hold a treat out to the side, 4 out of 5 times."],
+ mistakes:["Staring hard or leaning over {dog} — some dogs find direct staring uncomfortable. Keep soft eyes and blink.","Luring the treat to your face every time instead of waiting for {dog} to figure it out.","Saying “look, look, look”. Silence helps {dog} think."],
+ levelUp:"Build to 5 seconds, or practice with a mild distraction like a toy on the floor."},
+{skill:"touch", title:"Hand Target (Touch)", goal:"{dog} bumps their nose into your open palm when you say “Touch”.",
+ why:"Touch is a quick, happy behavior you can use to move {dog} anywhere — and it’s a great confidence builder because it’s so easy to get right.",
+ need:[T,POUCH,CLICK], sessions:3, minutes:4, reps:"10 reps per session",
+ steps:["Present a flat open palm 2–3 inches from {dog}’s nose, at nose height.","Most dogs sniff it. The moment their nose touches your palm, mark “Yes!” and treat from your OTHER hand.","Hide the target hand behind your back, then present it again. Only leave it out 2–3 seconds each time.","If {dog} doesn’t sniff, rub a little treat scent on your palm, or move it slightly away (movement attracts attention).","After 8 out of 10 successes, say “Touch” just before presenting your hand. Then move your hand left, right, higher, lower and a little farther away."],
+ success:["{dog} bumps your hand on cue 8 out of 10 times, even when it’s 1–2 feet away."],
+ mistakes:["Pushing your hand into {dog}’s nose — let them come to you.","Leaving the hand out too long, which makes it boring.","Rewarding licks or mouthing instead of a clear nose bump."],
+ levelUp:"Walk backward and have {dog} follow your hand for 3 touches in a row."},
+{skill:"sit", title:"Sit", goal:"{dog} sits on a verbal cue or hand signal — no food in your signaling hand.",
+ why:"Sit is a polite default behavior. It’s the building block for waiting at doors, greeting people nicely, and ‘saying please’.",
+ need:[T,POUCH,QUIET], sessions:3, minutes:4, reps:"10 reps per session",
+ steps:["Hold a treat right at {dog}’s nose. Slowly move it up and slightly back over their head.","As their head goes up, their rear will go down. Mark “Yes!” the instant their rear touches the floor, then give the treat.","Release with “Free!” and toss a treat a step away so {dog} stands up again. Repeat 5 times with food in your hand.","Now use the same hand motion with an EMPTY hand, and deliver the treat from your other hand or pouch. This fades the lure.","When {dog} sits reliably for the empty-hand signal, say “Sit” once, pause a beat, then give the hand signal. Soon the word alone will work."],
+ success:["{dog} sits on the verbal cue or hand signal with no food in your signaling hand, 4 out of 5 times in a quiet room."],
+ mistakes:["Pushing {dog}’s rear down — it’s unpleasant and doesn’t teach them to do it themselves.","Holding the lure too high, so {dog} jumps up to reach it.","Keeping food in the signaling hand for too long. Fade it after about 5 reps.","Repeating “sit, sit, sit”."],
+ levelUp:"Ask for a sit before meals and before you open the door to go outside."},
+{skill:"down", title:"Down", goal:"{dog} lies down on a hand signal with an empty hand.",
+ why:"Down is a calmer, more stable position — the base for settling, longer stays, and relaxing at a café or the vet.",
+ need:[T,POUCH,"Rug or soft surface",QUIET], sessions:3, minutes:5, reps:"8–10 reps per session",
+ steps:["Ask for a sit. Hold a treat at {dog}’s nose and slowly lower it straight down between their front paws.","Then slowly draw it along the floor away from them, making an ‘L’ shape. Mark “Yes!” the moment their elbows touch the floor, and treat on the floor between their paws.","If their rear pops up, just restart and go slower. You can also lure under your bent knee like a tunnel.","After about 5 lured reps, use the same motion with an empty hand and reward from your other hand.","Shrink the motion to a flat palm lowered toward the floor. Then add the word “Down” just before the hand signal."],
+ success:["{dog} lies down on the hand signal with an empty hand, 4 out of 5 times."],
+ mistakes:["Pushing on {dog}’s shoulders or pulling legs out — never needed.","Luring too fast. Slow and steady keeps their nose glued to your hand.","Marking late, after {dog} has already popped back up.","Practicing on cold, slippery floors — many dogs won’t lie down there."],
+ levelUp:"‘Puppy push-ups’: sit → down → sit → down, rewarding every 2nd or 3rd position."},
+{skill:null, review:true, skills:["marker","name","focus","touch","sit","down"], title:"Review Day: Week 1 Foundations", goal:"Check in on every week-1 skill and celebrate what {dog} has learned.",
+ why:"Review days consolidate learning and show you which skills are solid and which need a little more practice before you build on them.",
+ need:[T,POUCH,MAT], sessions:3, minutes:5, reps:"Mix all skills in each session",
+ steps:["Warm up with 5 quick Name Game reps.","Do a rapid-fire round: 3 hand touches, 3 sits, 3 downs, and one 3-second ‘Look’. Reward every success.","Repeat the round in a different room — new places are harder, so be generous with rewards.","Note which skills felt shaky (slow responses, needed a lure). Spend an extra minute on those.","End with something {dog} loves: a game of tug, a sniff walk, or a chew."],
+ success:["You can name {dog}’s strongest and weakest skills, and you’ve noted them below.","{dog} responds to name, touch, sit and down in two different rooms."],
+ mistakes:["Turning review into a test and getting frustrated. If something’s rusty, just make it easier.","Long sessions — keep each one under 5 minutes."],
+ levelUp:"Try each cue while you’re sitting in a chair instead of standing."}
+);
+
+DAYS.push(
+{skill:"recall", title:"Come! Recall Basics", goal:"{dog} runs to you happily from across a quiet room on the first call.",
+ why:"A reliable recall can save {dog}’s life. We build it as the best game in the world, so coming to you is always worth it.",
+ need:["High-value treats (chicken, cheese)",POUCH,"A helper (optional)"], sessions:3, minutes:3, reps:"5–6 recalls per session",
+ steps:["Pick a cue that has no bad history. If “Come” has been yelled a lot, choose “Here!” instead.","Charge the cue: with {dog} next to you, say “{dog}, come!” cheerfully and immediately give a treat at your feet. Repeat 5 times.","Back-up recall: when {dog} is a few feet away, call once, then clap and jog backwards. Mark “Yes!” as they reach you and give a jackpot — 3–5 treats one at a time.","Gently touch {dog}’s collar or harness before treating, so being caught is also a good thing.","Release with “Free!” to go back to playing — coming to you shouldn’t always end the fun. Gradually call from farther across the room."],
+ success:["{dog} comes immediately from across a quiet room, 9 out of 10 times."],
+ mistakes:["Calling {dog} for something unpleasant (bath, nail trim, leaving the park). Go get them instead.","Repeating the cue. Call once, then help with movement and noise.","Chasing {dog} — it turns into a game of keep-away.","Calling when you know they won’t come. Set up only recalls you’re confident will work."],
+ levelUp:"Call {dog} from another room, or play ‘puppy ping-pong’ with a family member."},
+{skill:"leaveit", title:"Leave It: The Closed Fist", goal:"{dog} turns away from a treat in your open palm when you say “Leave it”.",
+ why:"Leave it is a life-saving skill for dropped pills, chicken bones and trash. It also teaches {dog} that self-control pays off.",
+ need:["Two kinds of treats: a ‘boring’ one to leave and a better one to reward",POUCH], sessions:3, minutes:4, reps:"8–10 reps per session",
+ steps:["Put a treat in a closed fist and hold it near {dog}. They’ll sniff, lick or paw — keep your fist closed and stay silent.","The moment {dog} backs off or looks away, mark “Yes!” and give a treat from your OTHER hand. Never give them the ‘leave it’ treat.","Repeat until {dog} immediately moves away from your fist.","Now say “Leave it” as you present the fist.","Progress to an open palm: if {dog} moves toward it, just close your hand. Reward from the other hand when they hold back."],
+ success:["{dog} turns away from an open palm holding a treat when you say “Leave it”, 4 out of 5 times."],
+ mistakes:["Giving {dog} the treat they were asked to leave — it teaches ‘leave it means wait a moment, then get it’.","Saying “leave it” repeatedly, or sternly. It’s just information.","Moving to the floor before the open palm is solid."],
+ levelUp:"Place a treat on the floor and cover it with your hand. Reward when {dog} looks away from your hand."},
+{skill:"dropit", title:"Drop It: The Trade Game", goal:"{dog} lets go of a toy when you say “Drop” — before they see the treat.",
+ why:"Drop it is safer than prying things out of {dog}’s mouth. Because {dog} learns that letting go pays (and often gets the item back), they’re less likely to run off or guard things.",
+ need:["A low-value toy","High-value treats",POUCH], sessions:3, minutes:4, reps:"6–8 trades per session",
+ steps:["Offer a low-value toy and let {dog} play with it for a few seconds.","Put a high-value treat right at {dog}’s nose. As they open their mouth to take it, say “Drop”, then mark “Yes!” and give the treat.","Give the toy BACK. This is the secret — dropping doesn’t mean losing.","Repeat 5–8 times. Then say “Drop” first, wait 2 seconds, and only then show the treat.","In everyday life, trade up for anything {dog} picks up instead of chasing."],
+ success:["{dog} drops a low-value toy on the verbal cue before seeing the treat, 4 out of 5 times."],
+ mistakes:["Chasing {dog} to get things back — this teaches keep-away.","Prying their mouth open or grabbing the item.","Always taking the item away. Return it most of the time when it’s safe.","Using a treat that’s less exciting than the toy.","⚠️ If {dog} growls, freezes or guards items, stop and consult a force-free trainer or veterinary behaviorist."],
+ levelUp:"Play tug and pause with a “Drop” every 20 seconds — restarting the game is the reward."},
+{skill:"lll", title:"Loose-Leash Walking: The Reward Zone", goal:"{dog} walks 10 steps indoors beside you on a loose leash.",
+ why:"Pulling is learned because it works — it gets dogs where they want to go. We teach that the spot next to your leg is where all the good stuff happens.",
+ need:[LEASH,HARN,T,POUCH], sessions:3, minutes:5, reps:"Reward every 1–3 steps",
+ steps:["Choose a side (left or right). The ‘reward zone’ is right next to your leg on that side.","Indoors, with the leash on and loose, take a step. When {dog} is beside you, mark “Yes!” and deliver the treat right at your leg seam, low down.","Walk a few steps, rewarding very often (every 1–2 steps at first) for being in the zone.","If {dog} forges ahead and the leash tightens, stop and ‘be a tree’. The moment the leash slackens or they look back, mark, treat at your side, and walk on.","Gradually increase the number of steps between rewards: 2, 3, 5, then 10."],
+ success:["{dog} walks 10 steps indoors with a loose leash, 4 out of 5 tries."],
+ mistakes:["Pulling back or jerking the leash — it creates tension and makes dogs pull harder.","Letting pulling work ‘just this once’.","Delivering treats out in front of you, which draws {dog} ahead.","Using a retractable leash, which teaches dogs that pulling extends the leash."],
+ levelUp:"Practice in the backyard or driveway."},
+{skill:"stay", title:"Stay, Part 1: Duration", goal:"{dog} holds a sit-stay for 15–20 seconds while you stand right in front of them.",
+ why:"Stay is built with the 3 Ds — Duration, Distance and Distraction — one at a time. Today we work on duration only.",
+ need:[T,POUCH,QUIET], sessions:3, minutes:5, reps:"8–10 stays per session",
+ steps:["Teach a release word first: ask for a sit, say “Free!” and toss a treat a step away so {dog} gets up. Repeat 3 times — “Free!” means ‘you can move now’.","Ask for a sit. Say “Stay” with a flat palm toward {dog}, wait 1 second, mark “Yes!”, and give a treat while {dog} is still sitting. Then say “Free!”.","Build time in a ping-pong pattern: 2s, 3s, 1s, 5s, 3s, 8s, 2s, 10s… Varying it keeps it easy to succeed.","If {dog} gets up, calmly reset with no fuss, and make the next rep shorter.","Stay right in front of {dog} — no distance today. (Some trainers skip the word “Stay” and treat every cue as ‘hold it until released’. Both approaches work.)"],
+ success:["{dog} holds a sit-stay for 15–20 seconds with you standing in front, 4 out of 5 times."],
+ mistakes:["Rewarding after the release — the treat must come while {dog} is still in position.","Increasing time too quickly or always making it harder.","Forgetting to release, so {dog} learns to decide when stay ends.","Adding distance too soon."],
+ levelUp:"Build to 30 seconds, or practice the same thing in a down."},
+{skill:"crate", title:"Crate & Alone-Time Comfort", goal:"{dog} walks into the crate on their own and relaxes with a chew for 5 minutes, door closed, you nearby.",
+ why:"A crate or safe space should feel like a cozy den, never a punishment. Gradual practice prevents stress and builds a dog who can relax when alone.",
+ need:["Crate, pen or gated area","Soft bedding","Long-lasting chew or stuffed food toy",T], sessions:2, minutes:10, reps:"Short, relaxed reps",
+ steps:["Make the crate cozy: soft bedding, in a living area, with the door secured open so it can’t swing and bang.","Toss treats near, then inside the crate. Let {dog} walk in and out freely — never push them in.","Feed a meal inside the crate with the door open.","Give a long-lasting chew in the crate and sit nearby. Close the door for a few seconds while they chew, and open it before they finish or fuss.","Build up to a few minutes with the door closed while you’re in the room, then step out of sight for a few seconds and return calmly. Keep departures and returns boring."],
+ success:["{dog} goes in on their own and settles with a chew for 5 minutes, door closed, you in the room, with no distress."],
+ mistakes:["Using the crate as punishment or a ‘time-out’.","Leaving {dog} too long too soon. If {dog} is crying or panicking, you’ve moved too fast — go back a step.","Making a big emotional fuss when you leave or come back.","Not every dog needs a crate — a gated room or pen works too. ⚠️ Drooling, destruction, howling or escape attempts when alone may be separation anxiety; talk to your vet or a certified separation anxiety trainer."],
+ levelUp:"Step out of the room for 1–2 minutes while {dog} enjoys a chew."},
+{skill:null, review:true, skills:["recall","leaveit","dropit","lll","stay","crate"], title:"Review Day: Week 2 Life Skills", goal:"Practice each week-2 skill and decide which ones need an extra day.",
+ why:"Life skills get used every day. A review session helps them stick before we start adding distance and distractions.",
+ need:[T,"High-value treats",POUCH,LEASH,"A toy"], sessions:3, minutes:5, reps:"Mix all skills in each session",
+ steps:["Warm up with 3 back-up recalls.","Leave it with an open palm (3 reps), then 3 Drop-It trades with a toy.","Do 2 minutes of reward-zone loose-leash walking indoors.","Practice 3 sit-stays, ping-ponging between 5 and 20 seconds.","Finish with 5 minutes of relaxed crate time with a chew."],
+ success:["{dog} does each skill at the level of its day’s success criteria.","You’ve noted any skill to repeat (use ‘Repeat this day’ on that lesson if needed)."],
+ mistakes:["Skipping the weakest skill because it’s frustrating — that’s the one to practice (just make it easier)."],
+ levelUp:"Do the whole review in your backyard or a quiet hallway."}
+);
+
+DAYS.push(
+{skill:"wait", title:"Wait at Doors", goal:"{dog} waits while the door opens fully, until you release them.",
+ why:"Door-dashing is one of the most common ways dogs get lost or hit by cars. ‘Wait’ means ‘pause here until I invite you’ — a brief pause, unlike a longer stay.",
+ need:[LEASH,T,POUCH,"An interior door to practice on"], sessions:3, minutes:4, reps:"6–8 reps per session",
+ steps:["Start at an interior door (or an exterior door with the leash on). Ask for a sit or just let {dog} stand.","Put your hand on the doorknob. If {dog} stays put, mark “Yes!” and treat. If they move forward, take your hand away.","Open the door an inch. If {dog} holds position, close it, mark and treat. If they move toward the gap, gently close the door (never on {dog}).","Gradually open it wider and keep it open longer.","Release with “Free!” or “Let’s go” and walk through together. Add the word “Wait” once {dog} is getting it."],
+ success:["{dog} waits while the door opens fully, and until released, 4 out of 5 times."],
+ mistakes:["Letting the door opening become the release — only your release word means go.","Practicing at a front door with no leash before the skill is solid.","Closing the door hard toward {dog} — it should be a gentle ‘oops, closed’."],
+ levelUp:"Ask {dog} to wait while you step through first, then release them."},
+{skill:"place", title:"Go to Place (Mat)", goal:"From 3 feet away, {dog} goes to the mat and lies down on cue.",
+ why:"Place gives {dog} a clear, rewarding job when life gets busy — dinner time, the doorbell, visitors — instead of begging or jumping.",
+ need:[MAT,T,POUCH], sessions:3, minutes:5, reps:"8–10 reps per session",
+ steps:["Put a mat on the floor. Toss a treat onto it; when {dog} steps on, mark “Yes!” and drop another treat on the mat. Toss a treat off the mat to reset.","Now wait for {dog} to step onto the mat on their own. Mark and treat ON the mat.","Raise the bar: reward for all four paws on the mat, then for a sit or down on the mat.","Say “Place” as {dog} is heading to the mat. Soon you can say it first.","Build a little duration by dropping treats calmly between their paws while they lie there, then release with “Free!”. Gradually send from farther away."],
+ success:["From 3 feet away, {dog} goes to the mat and lies down on cue, 4 out of 5 times."],
+ mistakes:["Luring onto the mat for too long instead of letting {dog} offer it.","Delivering treats off the mat — rewarding on the mat builds its value.","Using the mat for time-outs."],
+ levelUp:"Send {dog} from 6 feet away, or move the mat to a new room."},
+{skill:"stay", title:"Stay, Part 2: Distance", goal:"{dog} holds a stay while you walk 10 feet away and come back.",
+ why:"Now we add the second D — distance. We make duration easy again so {dog} only has one hard thing to think about.",
+ need:[T,POUCH,QUIET], sessions:3, minutes:5, reps:"8–10 stays per session",
+ steps:["Warm up with a few 10-second stays right in front of {dog}.","Ask for a stay, take ONE step back, then immediately step back in. Mark “Yes!”, treat in position, then release “Free!”.","Next try two steps, then three. Mix in easy reps (one step) between harder ones.","Always walk back to {dog} to reward. Don’t call them out of a stay — that blurs stay and recall.","Build to 5–10 steps. Try stepping sideways or turning your back for a second."],
+ success:["{dog} holds a stay while you walk 10 feet away and back, 4 out of 5 times."],
+ mistakes:["Increasing distance AND duration at the same time.","Calling {dog} to you from the stay.","Leaning or looming as you return — stay relaxed and upright."],
+ levelUp:"Step out of sight around a doorway for 2 seconds and come straight back."},
+{skill:"greet", title:"Polite Greetings: Four on the Floor", goal:"{dog} keeps four paws on the floor while a helper approaches and says hi.",
+ why:"Jumping is a friendly attempt to say hello up close. Rather than punishing it, we show {dog} that keeping paws on the floor is what earns attention.",
+ need:[LEASH,T,POUCH,"A helper"], sessions:3, minutes:5, reps:"5–8 approaches per session",
+ steps:["Hold {dog}’s leash (or tether it to something sturdy) so they can’t practice jumping.","Your helper walks toward {dog}. As long as all four paws stay on the floor (or {dog} sits), the helper keeps coming and you mark “Yes!” and treat.","If {dog} jumps, the helper calmly turns away and steps back out of reach. Try again when {dog} is calmer.","When the helper reaches {dog}, they greet calmly and low — a chin scratch — while you scatter a few treats on the floor to keep {dog}’s head down.","When YOU come home, greet {dog} calmly and toss treats on the floor before jumping has a chance to happen."],
+ success:["{dog} keeps four paws on the floor while the helper greets, 4 out of 5 approaches."],
+ mistakes:["Pushing {dog} down, kneeing them or stepping on paws — these are aversive and still give attention.","Inconsistency — if some family members allow jumping, {dog} will keep trying.","Greeting when {dog} is over-excited. Wait for a calmer moment."],
+ levelUp:"Ask your helper to be a little more excited when they say hi."},
+{skill:"lll", title:"Loose-Leash Walking: Taking It Outside", goal:"{dog} walks 20 steps on a loose leash in a quiet outdoor area.",
+ why:"Outdoors is full of smells and sights, so it’s much harder than the living room. We go back to frequent rewards and add sniffing as a reward.",
+ need:[LEASH,HARN,"High-value treats",POUCH], sessions:2, minutes:8, reps:"Reward every few steps",
+ steps:["Start somewhere low-distraction (driveway, quiet street) at a quiet time of day.","Reward {dog} frequently in the reward zone — every few steps at first. Outdoor treats need to be extra tasty.","Practice changes of direction: say “This way!” cheerfully, turn, and reward when {dog} catches up.","If the leash tightens, stop and wait for slack, then walk on.","Use sniffing as a reward: after some nice walking, say “Go sniff!” and let {dog} explore for 10–20 seconds."],
+ success:["{dog} walks 20 steps on a loose leash in a quiet outdoor area, 3 out of 4 tries."],
+ mistakes:["Expecting indoor-level skills outside on day one.","Making training walks too long. Separate short training walks from relaxed ‘sniffari’ walks on a long line.","Using a retractable leash or yanking the leash."],
+ levelUp:"Walk past a mildly interesting spot (a hedge, a mailbox) with a loose leash."},
+{skill:"recall", title:"Recall Games: Round Robin & Hide-and-Seek", goal:"{dog} comes on the first call during a game, even with a mild distraction around.",
+ why:"Games build speed and enthusiasm. The more fun recall is, the more reliable it gets.",
+ need:["High-value treats",POUCH,"A helper","A toy for distraction","15–30 ft long line (outdoors)"], sessions:3, minutes:4, reps:"6–8 recalls per session",
+ steps:["Round robin: two or more people stand across a room or fenced yard, each with treats. Take turns calling “{dog}, come!”, with a jackpot and a collar touch each time.","Hide-and-seek: while {dog} is distracted, hide behind a door or furniture and call once. Celebrate big when they find you.","Add a mild distraction, like a toy lying on the floor, and call {dog} past it.","Practice outdoors only in a securely fenced area or with a long line attached to a harness.","Keep it short and finish while {dog} is still eager."],
+ success:["{dog} comes on the first call during round robin with a mild distraction, 8 out of 10 times."],
+ mistakes:["Calling more than once.","Ending the fun every time you call. Release {dog} back to play often.","Practicing off-leash in an unfenced area."],
+ levelUp:"Call {dog} while they’re sniffing something mildly interesting."},
+{skill:null, review:true, skills:["wait","place","stay","greet","lll","recall"], title:"Review Day: Week 3 Self-Control", goal:"Combine doors, mats, stays and greetings in short, upbeat sessions.",
+ why:"Week 3 skills are all about calm self-control. Reviewing them together shows {dog} that the same rules apply in different situations.",
+ need:[T,POUCH,LEASH,MAT,"A helper (optional)"], sessions:3, minutes:5, reps:"Mix all skills in each session",
+ steps:["Wait at an interior door 3 times, opening it a little wider each time.","Send {dog} to place 3 times and reward calm lying down.","Do 3 stays: one for duration (20 seconds), one for distance (10 feet), and one easy one.","If you have a helper, practice 3 four-on-the-floor greetings.","Finish with a recall game and a sniff break."],
+ success:["{dog} meets the success criteria for at least 4 of the 6 skills.","You’ve noted which skill to repeat or practice more."],
+ mistakes:["Stacking difficulty (long stay + far distance) on a review day."],
+ levelUp:"Chain them: wait at the door → walk to the mat → place → stay for 20 seconds."}
+);
+
+DAYS.push(
+{skill:"stay", title:"Stay, Part 3: Distraction", goal:"{dog} holds a stay while you drop a toy on the floor 2 feet away.",
+ why:"Distraction is the third D, and the one real life throws at you most. Start tiny and build up.",
+ need:[T,POUCH,"A toy or ball"], sessions:3, minutes:5, reps:"8–10 stays per session",
+ steps:["Warm up with a few short stays close to {dog}.","Add tiny distractions while standing close: shift your weight, raise an arm, bend your knees. Mark “Yes!” and treat for holding.","Progress gradually: clap once, drop a glove, bounce a ball once.","Drop a toy, then release {dog} with “Free — get it!” as a bonus reward. Getting the toy becomes the payoff for staying.","Only combine Ds (a bit of distance AND a distraction) once each D is solid alone."],
+ success:["{dog} holds a stay while you drop a toy 2 feet away, 4 out of 5 times."],
+ mistakes:["Big jumps in difficulty — tiny steps are faster in the long run.","Scolding when {dog} breaks. Just reset and make it easier.","Rewarding after the release instead of in position."],
+ levelUp:"Hold a stay while a recorded doorbell sound plays quietly."},
+{skill:"leaveit", title:"Leave It: On the Floor & On the Move", goal:"{dog} walks past a treat on the floor on a loose leash.",
+ why:"Real-world ‘leave it’ happens on walks, with things on the ground. Now we move the skill from your hand to the floor and add movement.",
+ need:[T,"Higher-value treats",POUCH,LEASH], sessions:3, minutes:5, reps:"6–8 reps per session",
+ steps:["Warm up with the closed-fist and open-palm versions.","Place a treat on the floor and cover it with your hand. When {dog} looks away, mark “Yes!” and reward from your other hand.","Uncover the treat while standing, with your foot ready to cover it if {dog} goes for it.","With {dog} on leash, walk past a treat on the floor at a distance where they can succeed. Say “Leave it” and reward when they look at you.","Gradually walk closer. Keep the leash short enough to prevent grabbing — management, never jerking."],
+ success:["{dog} walks past a treat on the floor 3 feet away with a loose leash, 4 out of 5 times."],
+ mistakes:["Leash pops or jerks.","Getting too close too fast.","Leaving truly dangerous items accessible — use management while training."],
+ levelUp:"Practice leave it with a toy, or with a food wrapper on a walk."},
+{skill:"spin", trick:true, title:"Trick Day: Spin", goal:"{dog} spins in a circle with a small hand signal.",
+ why:"Tricks keep training fun and build your timing and {dog}’s confidence. Spin is a quick win for almost every dog.",
+ need:[T,POUCH,"Non-slip floor"], sessions:3, minutes:3, reps:"5–8 spins per session",
+ steps:["Hold a treat at {dog}’s nose and slowly lure them in a wide circle at nose height.","Mark “Yes!” as they complete the full circle, then treat.","After 5 lured reps, use the same motion with an empty hand and reward from your other hand.","Gradually shrink the motion to a small circle with your finger.","Add the word “Spin” before the hand signal. Teach the other direction with a different word, like “Twirl”."],
+ success:["{dog} spins in one direction with a small hand signal, 4 out of 5 times."],
+ mistakes:["Luring too fast or too high, so {dog} loses the treat or jumps.","Too many reps — spinning can make dogs dizzy. Keep it short."],
+ levelUp:"Teach the opposite direction, or cue a spin from a few feet away."},
+{skill:"settle", title:"Settle: Relaxing on Cue", goal:"{dog} relaxes on a mat for 5 minutes while you read.",
+ why:"Calm is a skill. Rewarding relaxation teaches {dog} an ‘off switch’ for busy homes, vet waiting rooms and cafés.",
+ need:[MAT,T,"A book or your phone","Long-lasting chew (optional)"], sessions:2, minutes:10, reps:"Calm, spaced-out rewards",
+ steps:["Make sure {dog} has had some exercise and a sniff first. Put the mat by your chair and sit down with a book.","Ignore busy behavior. When {dog} lies down, quietly place a treat between their paws. Use a soft, low “good” instead of an excited “Yes!”.","Reward signs of relaxation: hips rolled to one side, head resting down, a big sigh.","Gradually wait longer between treats — 10 seconds, 30 seconds, a minute.","Once {dog} is reliably relaxing, add the cue “Settle” as they lie down. Also reward calmness you notice during the day (capturing)."],
+ success:["{dog} relaxes on the mat for 5 minutes while you read, in 2 out of 2 sessions."],
+ mistakes:["Delivering treats with excitement, which winds {dog} up.","Expecting calm from an under-exercised dog.","Sessions that drag on — stop while {dog} is still relaxed."],
+ levelUp:"Practice settle while the TV is on or family members walk by."},
+{skill:"sit", skills:["sit","down"], title:"Sit & Down Anywhere (Generalization)", goal:"{dog} sits and lies down on a verbal cue alone in 3 different places.",
+ why:"Dogs don’t generalize well — ‘sit in the kitchen’ and ‘sit on the porch’ feel like different skills. Practicing in new places makes cues reliable.",
+ need:[T,POUCH,LEASH], sessions:3, minutes:5, reps:"5 sits + 5 downs per location",
+ steps:["List 5 spots to practice: kitchen, hallway, yard, porch, and on a walk.","In each new place, start easy: use the hand signal, or even a lure for 1–2 reps.","Test the verbal cue alone: keep your hands still at your sides and say “Sit” once.","Change your position: try cues while sitting in a chair, kneeling, or with your side to {dog}.","Once {dog} is fluent, reward most (not every) correct response with a treat and the rest with praise or a game."],
+ success:["{dog} sits and lies down on the verbal cue alone in 3 different locations."],
+ mistakes:["Assuming {dog} is being stubborn — new places really are harder.","Repeating the cue. Make it easier instead.","Phasing out rewards too early."],
+ levelUp:"Ask for a down while {dog} is standing 3 feet away from you."},
+{skill:"crate", title:"Alone-Time: Building Duration", goal:"{dog} stays relaxed alone for 10 minutes with a chew.",
+ why:"Gradually building alone time prevents stress and helps {dog} feel secure when you leave the house.",
+ need:["Crate, pen or safe room","Long-lasting chew or stuffed food toy","Phone camera to watch (optional)"], sessions:2, minutes:15, reps:"3–4 departures per session",
+ steps:["Desensitize departure cues: pick up your keys or put on shoes, then sit back down. Repeat until {dog} stops reacting.","Give {dog} a chew in their safe area. Leave the room for 30 seconds and return calmly. Then try 1, 2, then 5 minutes — and mix in short ones.","Watch {dog}’s body language (a phone camera helps). Relaxed? Progress. Whining, pacing or scratching? Shorten the time.","Keep returns boring: walk in, say a quiet hello, and let {dog} out once they’re calm.","Try a real mini-departure: step outside the front door for a minute and come back."],
+ success:["{dog} stays relaxed alone for 10 minutes with a chew."],
+ mistakes:["Big, emotional goodbyes and hellos.","Increasing time too fast.","Punishing accidents or destruction — they’re signs of stress, not spite."],
+ levelUp:"Build to 20–30 minutes, only as long as {dog} stays relaxed."},
+{skill:null, review:true, skills:["stay","leaveit","spin","settle","sit","down","crate"], title:"Review Day: Proofing Check-In", goal:"See how {dog}’s skills hold up with the 3 Ds and in new places.",
+ why:"This review tests whether skills are truly proofed. It’s normal for a few to need more work — that’s useful information, not failure.",
+ need:[T,"High-value treats",POUCH,LEASH,MAT,"A toy"], sessions:3, minutes:5, reps:"Mix all skills in each session",
+ steps:["Do 3 stays: one long (30s), one with distance (10 ft), one with a distraction (toy drop).","Practice leave it with a treat on the floor, walking past on leash.","Show off spin 3 times.","Ask for sit and down with the verbal cue only, in a room you rarely train in.","End with 5–10 minutes of settle or crate time with a chew."],
+ success:["{dog} meets the success criteria for most skills.","You’ve chosen 1–2 skills to repeat if needed."],
+ mistakes:["Testing everything at maximum difficulty. Mix easy reps between hard ones."],
+ levelUp:"Do the review outside in your yard or on a quiet street."}
+);
+
+DAYS.push(
+{skill:"paw", trick:true, title:"Trick Day: Shake / Paw", goal:"{dog} places a paw in your open palm on cue.",
+ why:"Paw is a classic trick that also helps {dog} get comfortable with paw handling — handy for nail trims and vet visits.",
+ need:[T,POUCH], sessions:3, minutes:3, reps:"6–8 reps per session",
+ steps:["Ask {dog} to sit. Hold a treat in a closed fist, low, near their chest and paw height.","Many dogs will paw at your fist. The instant their paw lifts or touches your hand, mark “Yes!”, open your hand and let them have the treat.","Repeat, then present an open, flat palm (no treat in it). Mark the paw touch and reward from your other hand.","Add the cue “Paw” or “Shake” just before you present your hand.","Teach the other paw with a different cue, like “High five” with your palm facing {dog}."],
+ success:["{dog} offers a paw into your open palm on cue, 4 out of 5 times."],
+ mistakes:["Grabbing and lifting {dog}’s paw for them.","Holding your hand too high.","Rewarding pawing that isn’t cued — this can become demand-pawing."],
+ levelUp:"Teach a ‘high five’ with the other paw."},
+{skill:"recall", title:"Recall Outdoors on a Long Line", goal:"{dog} comes from 15+ feet away outdoors, with moderate distractions, on the first call.",
+ why:"Outdoor recall is where it really counts. A long line gives {dog} freedom to explore while keeping them safe as you practice.",
+ need:["15–30 ft long line",HARN,"Very high-value treats",POUCH], sessions:2, minutes:8, reps:"5–6 recalls per session",
+ steps:["Attach a 15–30 ft long line to a back-clip harness (never a collar — sudden stops can injure the neck). Let it trail or hold it loosely.","Let {dog} explore. When they’re mildly interested in something (but not glued to it), call once: “{dog}, come!”.","When they come: jackpot, party, then release them to go sniff again with “Go sniff!”.","If they don’t come, don’t repeat the cue. Move away, make a fun noise, or crouch down. If needed, calmly walk up the line — don’t reel them in. Make the next rep easier.","Optional: charge a special ‘emergency recall’ word (like “Pizza!”) paired only with the very best treats, and save it for emergencies."],
+ success:["{dog} comes on the first call from 15+ feet away outdoors, 8 out of 10 times."],
+ mistakes:["Wrapping the long line around your hand — wear gloves and hold it loosely to avoid rope burns.","Calling when {dog} is fixated (squirrel!). Set up wins instead.","Going off-leash in unfenced areas too soon."],
+ levelUp:"Practice your emergency recall word at random times in the house and yard."},
+{skill:"place", title:"Place with Real-Life Distractions", goal:"{dog} stays on the mat while someone knocks and the door opens.",
+ why:"Place is most valuable when life is chaotic. Today we build it up step by step for the moments you need it most.",
+ need:[MAT,"High-value treats",POUCH,"A helper (or a doorbell sound on your phone)",LEASH], sessions:3, minutes:5, reps:"5–8 reps per session",
+ steps:["Warm up: send {dog} to place and build to 30–60 seconds, calmly dropping treats on the mat.","Add household distractions: walk around, open the fridge, knock lightly on a table. Reward {dog} for staying.","Play a recorded doorbell or knock at low volume. Reward generously for staying on the mat.","With a helper: they knock or ring, you send {dog} to place, and reward. Then open the door and let the helper come in calmly.","Use a leash or gate as backup if needed — management is not failure."],
+ success:["{dog} stays on place while someone knocks and the door opens, 3 out of 5 times."],
+ mistakes:["Jumping straight to the real doorbell with excited guests.","Expecting {dog} to stay for long periods without any reinforcement."],
+ levelUp:"Ask {dog} to place while you eat dinner."},
+{skill:"lll", title:"Loose-Leash Walking Past Distractions", goal:"{dog} walks past a moderate distraction 20 feet away with a loose leash.",
+ why:"Other dogs, squirrels and people are the toughest leash challenges. Working at the right distance lets {dog} learn instead of react.",
+ need:[LEASH,HARN,"Very high-value treats",POUCH], sessions:2, minutes:8, reps:"Several passes per session",
+ steps:["Find {dog}’s threshold — the distance at which they notice a distraction but can still take food and respond to you.","Play ‘Look at That’: when {dog} looks at the distraction, mark “Yes!” and treat. Seeing the distraction starts to predict good things from you.","Practice U-turns: say “This way!” cheerfully and turn away from anything too exciting. Reward when {dog} follows.","Walk past distractions at a comfortable distance and slowly reduce it over many sessions. Use sniff breaks as rewards.","If {dog} goes over threshold (lunging, barking, refusing food), calmly add distance. It’s not defiance — it means it’s too hard right now."],
+ success:["{dog} walks past a moderate distraction at about 20 feet with a loose leash, 3 out of 4 times."],
+ mistakes:["Getting too close too fast.","A tight leash, which adds tension and can increase reactivity.","Corrections or leash pops. ⚠️ If {dog} regularly lunges or barks at dogs or people, work with a force-free professional."],
+ levelUp:"Reduce the distance to the distraction by a few feet."},
+{skill:"greet", title:"Polite Greetings with Visitors", goal:"{dog} greets 2 visitors without jumping.",
+ why:"Real visitors arriving is peak excitement. We practice the whole arrival routine so it becomes calm and predictable.",
+ need:[LEASH,"Baby gate (optional)",MAT,T,"1–2 helpers"], sessions:2, minutes:8, reps:"5 arrivals per session",
+ steps:["Plan your management: leash or baby gate ready before the visitor arrives.","When the visitor knocks, send {dog} to place or hold the leash.","The visitor enters and ignores {dog} at first. When {dog} has four on the floor or is calm, the visitor greets calmly and low, or tosses a treat on the floor.","Have the visitor leave and come back 5 times. Repeated arrivals quickly become boring (in a good way).","On walks, ask {dog} for a sit or hand target when a person stops to say hi."],
+ success:["{dog} greets 2 different visitors without jumping."],
+ mistakes:["Visitors saying “I don’t mind!” and encouraging jumping — brief them first.","Too many people arriving at once.","Forcing greetings — not every dog wants to say hi to strangers, and that’s okay."],
+ levelUp:"Practice with a visitor {dog} finds really exciting."},
+{skill:"dropit", skills:["dropit","leaveit"], title:"Impulse Control Games: Drop, Leave & Trade", goal:"{dog} drops a tug toy mid-game on cue and leaves a tossed toy until released.",
+ why:"Combining drop it and leave it in play teaches {dog} that self-control and fun go together.",
+ need:["Tug toy","Another toy or ball",T,POUCH], sessions:3, minutes:4, reps:"6–8 reps per session",
+ steps:["Tug with rules: invite {dog} to tug with “Take it”, play for 10–20 seconds, then say “Drop” and freeze the toy (hold it still against your body). Mark and reward the drop.","Restart the game with “Take it” — restarting is the biggest reward.","Toss a toy, say “Leave it”, and reward when {dog} holds back. Then release with “Get it!”.","Set up a ‘found item’ on a walk (a toy you planted earlier) and practice “Drop” with a trade.","Keep the energy fun but under control — if {dog} gets too wild, pause until they calm down."],
+ success:["{dog} drops a tug toy mid-play on cue, 4 out of 5 times.","{dog} leaves a tossed toy until released, 3 out of 5 times."],
+ mistakes:["Letting tug get frantic or mouthy — pause the game for calm.","Ending every game by taking the toy away for good."],
+ levelUp:"Drop → sit → “Take it” as one smooth sequence."},
+{skill:null, review:true, skills:["paw","recall","place","lll","greet","dropit","leaveit"], title:"Review Day: Combining Skills", goal:"Run through week 5 skills in real-life setups.",
+ why:"By now {dog} has a big toolbox. This review checks that skills hold up with real distractions.",
+ need:["High-value treats",POUCH,LEASH,"Long line",MAT,"Tug toy"], sessions:3, minutes:6, reps:"Mix all skills in each session",
+ steps:["Show off paw 3 times.","Do 3 long-line recalls outdoors.","Practice place while someone knocks on the door.","Take a short loose-leash walk with a ‘Look at That’ moment.","Play a round of tug with 3 drops, then a leave-it with a toy."],
+ success:["{dog} meets the success criteria for most week-5 skills.","You’ve noted which skills need extra practice."],
+ mistakes:["Doing everything in one long session — split it across the day."],
+ levelUp:"Try the review at a friend’s house or a quiet park."}
+);
+
+DAYS.push(
+{skill:"rollover", trick:true, title:"Trick Day: Roll Over", goal:"{dog} does a full roll from a down with a hand signal.",
+ why:"Roll over teaches you to break a big behavior into small steps — a key trainer skill. Skip it or keep it partial for seniors or dogs with back or joint problems, and don’t practice right after meals.",
+ need:[T,POUCH,"Soft surface (rug or grass)"], sessions:3, minutes:4, reps:"5–6 reps per session",
+ steps:["Start with {dog} in a down on a soft surface.","Move a treat from their nose toward their shoulder, so their head turns back and they shift onto one hip. Mark “Yes!” and treat.","Continue the lure over their shoulder blade so they roll onto their side. Mark and treat.","Continue the lure so they roll onto their back and over to the other side. Mark and treat when they complete the roll. It’s fine to take several sessions to get here.","Fade the lure into a rolling hand motion, then add the cue “Roll over”."],
+ success:["{dog} completes a full roll from a down with a hand signal, 3 out of 5 times."],
+ mistakes:["Rushing the steps or pushing {dog} over.","Practicing on a hard floor.","Practicing right after a big meal."],
+ levelUp:"Try the verbal cue only."},
+{skill:null, review:true, combo:true, skills:["sit","down","touch","spin","place","stay"], title:"Combining Skills: Sequences", goal:"{dog} completes a 3-cue sequence in random order before getting a reward.",
+ why:"Real life rarely uses one cue at a time. Sequences build fluency and teach {dog} to listen instead of guessing what comes next.",
+ need:[T,POUCH,MAT], sessions:3, minutes:5, reps:"6–8 sequences per session",
+ steps:["Start with 2 cues before a reward, like “Sit” → “Down” → “Yes!” + treat.","Move up to 3 cues: e.g. Touch → Sit → Spin → “Yes!” + treat.","Mix up the order every time so {dog} can’t anticipate.","Try a ‘mat routine’: Place → Down → 10-second stay → “Free!” → Touch.","If {dog} guesses wrong, don’t say “no” — just pause, then repeat the cue once or make the sequence shorter."],
+ success:["{dog} completes a 3-cue sequence in random order before the reward, 4 out of 5 times."],
+ mistakes:["Chains that are too long too soon.","Always using the same order — {dog} will start anticipating."],
+ levelUp:"Create a 5-cue routine and show it off to family or friends."},
+{skill:"wait", title:"Wait: Thresholds, Cars & Bowls", goal:"{dog} waits at 3 different thresholds until released.",
+ why:"Generalizing ‘wait’ to cars, gates, curbs and food bowls keeps {dog} safe everywhere — not just at the front door.",
+ need:[LEASH,HARN,"{dog}’s food bowl",T,POUCH], sessions:3, minutes:5, reps:"3–4 reps per threshold",
+ steps:["Warm up with 3 waits at the front door.","Car: with {dog} safely in the car (harness or crate), open the door, say “Wait”, attach the leash, then release with “Free!” to hop out (or lift smaller or older dogs out).","Food bowl: say “Wait” and slowly lower the bowl. If {dog} moves toward it, raise it back up. When it reaches the floor with {dog} waiting, release with “Free!” to eat.","Curbs: on a walk, ask for a wait at each curb before crossing.","Gates and stairs: ask for a wait at the top of the stairs or at a gate before going through."],
+ success:["{dog} waits at 3 different thresholds until released."],
+ mistakes:["Letting the door opening or the bowl touching the floor become the release, instead of your word.","Making the bowl wait too long — a few seconds is plenty."],
+ levelUp:"Practice wait at a busier door, like a store or friend’s house entrance."},
+{skill:"focus", skills:["focus","name","touch"], title:"Field Trip: Focus in New Places", goal:"{dog} responds to their name and hand target in a new public place.",
+ why:"Taking skills on the road is the real test. Short, positive outings teach {dog} that they can listen to you anywhere.",
+ need:["Very high-value treats",POUCH,LEASH,HARN,"Water"], sessions:2, minutes:10, reps:"Short and positive",
+ steps:["Pick a moderately busy place: the edge of a park, a quiet pet-friendly store, or a parking lot at a quiet time.","Let {dog} look around and sniff for 2–3 minutes before asking for anything.","Play the Name Game and reward every voluntary check-in.","Ask for easy behaviors: hand touch, sit. Reward generously.","Keep it short and leave on a success. Watch for stress signals (lip-licking, yawning, whale eye, refusing food) and move farther away if you see them."],
+ success:["{dog} responds to name and touch, 4 out of 5 times, in a new public place."],
+ mistakes:["Staying too long, or choosing somewhere too busy for a first trip.","Asking for hard behaviors before {dog} has had a chance to settle in."],
+ levelUp:"Visit a slightly busier spot next time."},
+{skill:"touch", title:"Hand Target as a Life Tool", goal:"{dog} moves to your hand on cue, even past a mild distraction.",
+ why:"Touch becomes a handy everyday tool: getting off furniture, moving past distractions, and coming back to you.",
+ need:[T,POUCH,LEASH,"A sticky note"], sessions:3, minutes:4, reps:"8–10 reps per session",
+ steps:["Warm up with 5 quick touches.","Use touch to move {dog}: off the couch, into position beside you, or through a doorway.","Use touch as a mini-recall from across the room.","On a walk, use “Touch” to redirect {dog} away from a distraction, then reward.","Bonus: put a sticky note on your palm, then move it to a wall or door so {dog} learns to target an object (great for future tricks like closing doors)."],
+ success:["{dog} moves to your hand on cue past a mild distraction, 4 out of 5 times."],
+ mistakes:["Only using touch when something is wrong — keep it fun and rewarding.","Holding your hand out too long."],
+ levelUp:"Teach {dog} to touch a sticky note on a cabinet door to close it."},
+{skill:"settle", title:"Settle Anywhere: Café or Park Bench", goal:"{dog} relaxes on a mat for 10 minutes in a public place.",
+ why:"Being able to relax out in the world opens up cafés, patios and visits with friends. The mat you’ve trained at home travels with you.",
+ need:[MAT,"Long-lasting chew",T,LEASH,"Water"], sessions:1, minutes:15, reps:"One calm outing",
+ steps:["Exercise {dog} first with a sniffy walk.","Pick a quiet outdoor café or park bench, away from foot traffic. Put down {dog}’s familiar mat and sit.","Reward any calm behavior with treats placed quietly between their paws.","Offer a long-lasting chew to help {dog} relax.","Stay 10–15 minutes and leave before {dog} gets restless."],
+ success:["{dog} settles on the mat for 10 minutes in a public place."],
+ mistakes:["Picking a busy spot for the first try.","Skipping exercise beforehand.","Staying until {dog} is overwhelmed or bored."],
+ levelUp:"Build to 20 minutes, or try a slightly busier spot."},
+{skill:null, review:true, graduation:true, skills:["name","focus","touch","sit","down","recall","leaveit","dropit","lll","stay","place","wait","settle","greet","crate","spin","paw","rollover"], title:"Graduation Day: Skills Check", goal:"Celebrate how far {dog} has come and plan your ongoing training.",
+ why:"Training is a lifelong conversation. Today you celebrate progress, see the big picture, and set up a simple routine to keep skills sharp.",
+ need:["High-value treats",POUCH,LEASH,MAT,"A helper or camera (optional)"], sessions:2, minutes:10, reps:"One run-through of each skill",
+ steps:["Run through each skill once: name, look, touch, sit, down, come, leave it, drop it, loose-leash walk, stay, place, wait, settle, greeting, and your tricks.","Mark the skills that are reliable as mastered in this app (Progress → Skills).","Pick 2–3 skills to keep working on, and build them into everyday life (sit before meals, wait at doors, place during dinner).","Plan about 5 minutes of training a day to keep skills sharp, and keep rewarding good choices.","Celebrate! A special chew, a new toy, or a favorite outing. Take a photo of your graduate."],
+ success:["You’ve tested every skill and marked the reliable ones as mastered.","You have a simple maintenance plan for the coming weeks."],
+ mistakes:["Stopping rewards altogether — keep reinforcing, even if it’s less often.","Thinking ‘done’ means done. Skills fade without practice."],
+ levelUp:"Look into a fun next step: a force-free class in tricks or nose work, or the AKC Canine Good Citizen test."}
+);
+DAYS.forEach((d,i)=>{ d.day=i+1; d.week=Math.floor(i/7)+1; if(!d.skills) d.skills=d.skill?[d.skill]:[]; });
+
+/* ===================== APP ===================== */
+(function(){
+"use strict";
+const KEY = "pawsteps-dog-training-v1";
+const TOTAL = DAYS.length;
+const AGES = {puppy:["🍼","Puppy","Under 6 months"], adolescent:["⚡","Adolescent","6–18 months"], adult:["🐕","Adult","1.5–7 years"], senior:["🧡","Senior","7+ years"]};
+const RATINGS = {1:["😅","Struggled"],2:["🙂","Okay"],3:["🌟","Nailed it"]};
+const CATS = ["Foundations","Life Skills","Impulse Control","Calm & Comfort","Tricks"];
+const SKILL = Object.fromEntries(SKILLS.map(s=>[s.id,s]));
+const $ = (s,r=document)=>r.querySelector(s);
+
+/* ---------- utils ---------- */
+const pad = n => String(n).padStart(2,"0");
+const ymd = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const todayStr = () => ymd(new Date());
+const dnum = s => { const [y,m,d]=s.split("-").map(Number); return Math.round(Date.UTC(y,m-1,d)/864e5); };
+const daysBetween = (a,b) => dnum(b)-dnum(a);
+const addDays = (s,n) => { const [y,m,d]=s.split("-").map(Number); const dt=new Date(Date.UTC(y,m-1,d+n)); return dt.getUTCFullYear()+"-"+pad(dt.getUTCMonth()+1)+"-"+pad(dt.getUTCDate()); };
+const fmtDate = (s,o={weekday:"short",month:"short",day:"numeric"}) => { const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d).toLocaleDateString(undefined,o); };
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const isValidDate = s => /^\d{4}-\d{2}-\d{2}$/.test(s||"") && !isNaN(dnum(s));
+function dogName(){ return (state.profile && state.profile.name) || "your dog"; }
+/* personalize trusted content: escape, then insert escaped name */
+const P = t => esc(t).replace(/\{dog\}/g, esc(dogName()));
+
+/* ---------- state ---------- */
+let storageOK = true;
+function defaults(){ return {v:1, profile:null, spd:0, sound:true, days:{}, mastered:{}, activity:{}, repeats:[], created:todayStr()}; }
+function load(){
+  try{ const raw = localStorage.getItem(KEY); if(!raw) return defaults(); return normalize(JSON.parse(raw)); }
+  catch(e){ storageOK=false; return defaults(); }
+}
+function normalize(o){
+  const d = defaults(); if(!o || typeof o!=="object") return d;
+  const s = Object.assign(d, o);
+  ["days","mastered","activity"].forEach(k=>{ if(!s[k]||typeof s[k]!=="object"||Array.isArray(s[k])) s[k]={}; });
+  if(!Array.isArray(s.repeats)) s.repeats=[];
+  Object.keys(s.days).forEach(k=>{ const r=s.days[k]; if(!r||typeof r!=="object"){delete s.days[k];return;}
+    r.s=Array.isArray(r.s)?r.s:[]; r.sd=Array.isArray(r.sd)?r.sd:[]; r.hist=Array.isArray(r.hist)?r.hist:[]; r.r=Number(r.r)||0; r.n=typeof r.n==="string"?r.n:""; });
+  if(s.profile && (!s.profile.name || !isValidDate(s.profile.startDate))) s.profile=null;
+  return s;
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); storageOK=true; }catch(e){ storageOK=false; toast("⚠️ Couldn’t save — storage is unavailable in this browser mode"); } }
+let state = load();
+
+/* ---------- program logic ---------- */
+function rawDay(){ if(!state.profile) return 1; return daysBetween(state.profile.startDate, todayStr())+1; }
+function shiftCount(){ const t=todayStr(), st=state.profile?state.profile.startDate:t; return state.repeats.filter(d=>d<t && d>=st).length; }
+function schedInfo(){
+  const raw = rawDay();
+  if(raw<1) return {day:0, notStarted:true, startsIn:1-raw, finished:false};
+  const n = raw - shiftCount();
+  return {day:Math.min(Math.max(n,1),TOTAL), notStarted:false, finished:n>TOTAL};
+}
+function sessCount(n){ return state.spd>0 ? state.spd : DAYS[n-1].sessions; }
+function minutesFor(n){ const m=DAYS[n-1].minutes, a=state.profile&&state.profile.age;
+  if(a==="puppy") return Math.max(2, Math.round(m*0.6)); if(a==="senior") return Math.max(2, Math.round(m*0.8)); return m; }
+function getRec(n, create){ let r=state.days[n]; if(!r && create){ r=state.days[n]={s:[],sd:[],r:0,n:"",hist:[]}; } return r; }
+function doneCount(n){ const r=state.days[n]; if(!r) return 0; return r.s.slice(0,sessCount(n)).filter(Boolean).length; }
+function isComplete(n){ return doneCount(n)>=sessCount(n); }
+function status(n){
+  const r=state.days[n], done=doneCount(n), sch=schedInfo();
+  if(r && r.r===1 && done>0) return "struggled";
+  if(done>=sessCount(n)) return "done";
+  if(done>0) return "partial";
+  if(!sch.notStarted && n===sch.day && !sch.finished) return "today";
+  if(!sch.notStarted && (n<sch.day || sch.finished)) return "missed";
+  return "upcoming";
+}
+const STATUS_LABEL = {done:"Done",partial:"In progress",struggled:"Struggled",today:"Today",missed:"Not done",upcoming:"Upcoming"};
+function streak(){ let s=0, d=todayStr(); if(!(state.activity[d]>0)) d=addDays(d,-1); while(state.activity[d]>0){ s++; d=addDays(d,-1); } return s; }
+function bestStreak(){ const ks=Object.keys(state.activity).filter(k=>state.activity[k]>0).sort(); let best=0,cur=0,prev=null;
+  ks.forEach(k=>{ cur = (prev && daysBetween(prev,k)===1) ? cur+1 : 1; best=Math.max(best,cur); prev=k; }); return best; }
+function totalSessions(){ let t=0; Object.keys(state.days).forEach(k=>{ const r=state.days[k]; t+=r.s.filter(Boolean).length; r.hist.forEach(h=>t+=(h.s||0)); }); return t; }
+function daysCompleted(){ let c=0; for(let i=1;i<=TOTAL;i++) if(isComplete(i)) c++; return c; }
+function skillStatus(id){ if(state.mastered[id]) return "mastered"; return DAYS.some(d=>d.skills.includes(id) && (doneCount(d.day)>0 || (state.days[d.day]&&state.days[d.day].hist.length))) ? "practicing" : "new"; }
+function dayEmoji(d){ return d.graduation?"🎓":d.combo?"🧩":d.review?"🔁":SKILL[d.skill].emoji; }
+function phaseOf(d){ return PHASES[d.week-1]; }
+function shade(hex,amt){ const n=parseInt(hex.slice(1),16); let r=n>>16,g=(n>>8)&255,b=n&255; const t=amt<0?0:255,p=Math.abs(amt);
+  r=Math.round((t-r)*p+r); g=Math.round((t-g)*p+g); b=Math.round((t-b)*p+b); return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1); }
+
+/* ---------- UI helpers ---------- */
+let toastTimer;
+function toast(msg){ const t=$("#toast"); if(!t) return; t.textContent=msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),2600); }
+function confetti(){ const c=document.createElement("div"); c.className="confetti"; const em=["🐾","🦴","🎉","⭐","🐶","💛"];
+  for(let i=0;i<26;i++){ const s=document.createElement("span"); s.textContent=em[i%em.length]; s.style.left=Math.random()*100+"vw"; s.style.animationDelay=(Math.random()*.6)+"s"; s.style.fontSize=(18+Math.random()*18)+"px"; c.appendChild(s); }
+  document.body.appendChild(c); setTimeout(()=>c.remove(),2800); }
+
+/* ---------- routing ---------- */
+const ROUTES = [["today","🐕","Today"],["program","🗓️","Program"],["progress","📈","Progress"],["skills","📚","Skills"],["settings","⚙️","Settings"]];
+let route = "today", viewDay = null;
+function readRoute(){ const h=(location.hash||"").replace(/^#\/?/,""); route = ROUTES.some(r=>r[0]===h) ? h : "today"; }
+function go(r){ if(location.hash!=="#"+r){ try{ history.pushState(null,"","#"+r); }catch(e){ location.hash=r; return; } } render(); window.scrollTo(0,0); }
+function openDay(n){ viewDay=n; go("today"); }
+
+/* ---------- Timer ---------- */
+const C = 2*Math.PI*52;
+const timer = {total:300, remain:300, running:false, end:0, iv:null, day:null, done:false};
+let audioCtx = null;
+function timerReset(n){ clearInterval(timer.iv); timer.running=false; timer.done=false; timer.day=n; timer.total=timer.remain=minutesFor(n)*60; updateTimer(); }
+function timerToggle(){
+  if(timer.running){ timer.remain=Math.max(0,(timer.end-Date.now())/1000); timer.running=false; clearInterval(timer.iv); }
+  else{
+    if(timer.remain<=0){ timer.remain=timer.total; }
+    try{ audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==="suspended") audioCtx.resume(); }catch(e){}
+    timer.done=false; timer.running=true; timer.end=Date.now()+timer.remain*1000;
+    clearInterval(timer.iv); timer.iv=setInterval(tick,250);
+  }
+  updateTimer();
+}
+function timerAdd(sec){ if(timer.running){ timer.end+=sec*1000; timer.remain=(timer.end-Date.now())/1000; } else { timer.remain=Math.max(0,timer.remain+sec); }
+  timer.total=Math.max(60, timer.total+sec); if(timer.remain>timer.total) timer.total=timer.remain; if(timer.remain<=0 && timer.running){ timer.remain=0; } timer.done=false; updateTimer(); }
+function tick(){ timer.remain=(timer.end-Date.now())/1000; if(timer.remain<=0){ timer.remain=0; timer.running=false; timer.done=true; clearInterval(timer.iv); onTimerDone(); } updateTimer(); }
+function beep(){ if(!state.sound || !audioCtx) return; try{ [0,0.35,0.7].forEach((t,i)=>{ const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type="sine"; o.frequency.value=i===2?988:784;
+  g.gain.setValueAtTime(0.0001,audioCtx.currentTime+t); g.gain.exponentialRampToValueAtTime(0.3,audioCtx.currentTime+t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+t+0.3);
+  o.connect(g); g.connect(audioCtx.destination); o.start(audioCtx.currentTime+t); o.stop(audioCtx.currentTime+t+0.32); }); }catch(e){} }
+function onTimerDone(){ beep(); try{ navigator.vibrate && navigator.vibrate([200,100,200]); }catch(e){} toast("⏰ Time’s up! End on a win and give "+dogName()+" a break."); }
+function fmtTime(s){ s=Math.ceil(s); return Math.floor(s/60)+":"+pad(s%60); }
+function updateTimer(){
+  const txt=$("#tm-text"); if(!txt) return;
+  txt.textContent=fmtTime(timer.remain);
+  $("#tm-arc").setAttribute("stroke-dashoffset", (C*(1-(timer.total?timer.remain/timer.total:0))).toFixed(2));
+  $("#tm-start").innerHTML = timer.running ? "⏸ Pause" : (timer.remain<timer.total && timer.remain>0 ? "▶ Resume" : "▶ Start");
+  $("#tm-state").textContent = timer.running ? "running" : timer.done ? "done!" : (timer.remain<timer.total ? "paused" : "ready");
+  $("#tm-wrap").classList.toggle("finished", timer.done);
+  const mk=$("#tm-mark"); if(mk) mk.hidden = !(timer.done && viewDayNum() && doneCount(viewDayNum())<sessCount(viewDayNum()));
+}
+function viewDayNum(){ const s=schedInfo(); return viewDay || (s.notStarted?1:s.day); }
+
+/* ---------- Views: Today ---------- */
+function viewToday(){
+  const sch=schedInfo(), n=viewDayNum(), d=DAYS[n-1], ph=phaseOf(d), r=getRec(n,false)||{s:[],r:0,n:"",hist:[]};
+  const need=sessCount(n), done=doneCount(n), mins=minutesFor(n), name=esc(dogName());
+  if(timer.day!==n && !timer.running) { timer.day=n; timer.done=false; timer.total=timer.remain=mins*60; }
+  const isToday = !sch.notStarted && n===sch.day && !sch.finished;
+  let banners="";
+  if(sch.notStarted) banners+=`<div class="banner info">📅 <div>${name}’s program starts <b>${esc(fmtDate(state.profile.startDate,{weekday:"long",month:"long",day:"numeric"}))}</b> (in ${sch.startsIn} day${sch.startsIn>1?"s":""}). Here’s a sneak peek — feel free to start early!</div></div>`;
+  if(sch.finished && n===TOTAL) banners+=`<div class="banner good">🎓 <div>You’ve reached the end of the 6-week program! Keep skills sharp with 5 minutes a day, and revisit any day from the Program tab.</div></div>`;
+  if(!sch.notStarted && !sch.finished && n>sch.day) banners+=`<div class="banner warm">👀 <div>Peeking ahead — this lesson is scheduled ${n-sch.day} day${n-sch.day>1?"s":""} from now. It’s fine to practice early if ${name} is ready.</div></div>`;
+  if(r.hist && r.hist.length) banners+=`<div class="banner info">🔁 <div><b>Attempt #${r.hist.length+1}.</b> Earlier tries: ${r.hist.map(h=>esc(fmtDate(h.date,{month:"short",day:"numeric"}))+" ("+h.s+" session"+(h.s===1?"":"s")+(h.r?", "+RATINGS[h.r][1].toLowerCase():"")+")").join(" · ")}</div></div>`;
+
+  const skillChips = d.skills.map(id=>`<button class="chip ${state.mastered[id]?"g":""}" data-act="skill" data-id="${id}" style="border:0">${SKILL[id].emoji} ${esc(SKILL[id].name)}${state.mastered[id]?" ✓":""}</button>`).join("");
+  const sessBtns = Array.from({length:need},(_,i)=>`<button class="sess ${r.s[i]?"done":""}" data-act="sess" data-i="${i}" aria-pressed="${!!r.s[i]}"><span class="box">✓</span>Session ${i+1}<small>${mins} min</small></button>`).join("");
+  const masterTargets = d.skills.length ? d.skills : [];
+  const masterBtns = masterTargets.length<=3 ? masterTargets.map(id=>`<button class="mbtn ${state.mastered[id]?"on":""}" data-act="master" data-id="${id}">${state.mastered[id]?"⭐ Mastered":"☆ Mark mastered"}: ${esc(SKILL[id].name)}</button>`).join("")
+     : `<span class="small muted">Mark individual skills as mastered from the Progress tab.</span>`;
+
+  return `
+  <section class="day-hero" style="--phase:${ph.color};--phase2:${shade(ph.color,-0.32)}">
+    <div class="nav-row">
+      <button class="icon-btn" data-act="prev" ${n<=1?"disabled":""} aria-label="Previous day">‹</button>
+      <div class="center"><div class="kicker">Week ${d.week} · ${esc(ph.name)}</div><h1>Day ${n} with ${name}</h1></div>
+      <button class="icon-btn" data-act="next" ${n>=TOTAL?"disabled":""} aria-label="Next day">›</button>
+    </div>
+    <div class="lesson"><div class="big">${dayEmoji(d)}</div><div><h2>${P(d.title)}</h2><p>${P(d.goal)}</p></div></div>
+    <div class="chips"><span class="chip">⏱ ${need} × ${mins} min</span><span class="chip">🔁 ${P(d.reps)}</span>${isToday?'<span class="chip">📍 Today</span>':""}${d.review?'<span class="chip">⭐ Review day</span>':""}${d.trick?'<span class="chip">✨ Trick</span>':""}</div>
+    ${(!isToday && !sch.notStarted && !(sch.finished && n===TOTAL)) ? `<button class="today-link" data-act="today">↩ Back to today (Day ${sch.day})</button>`:""}
+  </section>
+  ${banners}
+  <div class="today-grid">
+    <div class="t-top">
+      <div class="card">
+        <h3><span class="h-ic">✅</span> ${isToday?"Today’s sessions":"Sessions"} <span class="spacer"></span><span class="small muted" id="sess-count">${done}/${need} done</span></h3>
+        <div class="sessions" style="--n:${need}">${sessBtns}</div>
+        <div class="meter g" style="margin-top:12px"><i style="width:${Math.round(done/need*100)}%"></i></div>
+      </div>
+      <div class="card">
+        <h3><span class="h-ic">⏱️</span> Session timer</h3>
+        <div class="timer" id="tm-wrap">
+          <div class="ring"><svg width="118" height="118" viewBox="0 0 118 118"><circle cx="59" cy="59" r="52" fill="none" stroke="#F1EADF" stroke-width="10"/><circle id="tm-arc" cx="59" cy="59" r="52" fill="none" stroke="${ph.color}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C.toFixed(2)}" stroke-dashoffset="0"/></svg>
+            <div class="t"><div><span id="tm-text">${fmtTime(timer.remain)}</span><small id="tm-state">ready</small></div></div></div>
+          <div class="timer-ctrls">
+            <button class="btn" id="tm-start" data-act="tm-toggle">▶ Start</button>
+            <div class="row"><button class="btn sec sm" data-act="tm-add" data-s="-60" aria-label="Minus one minute">−1m</button><button class="btn sec sm" data-act="tm-reset">Reset</button><button class="btn sec sm" data-act="tm-add" data-s="60" aria-label="Plus one minute">+1m</button></div>
+            <button class="btn green sm" id="tm-mark" data-act="tm-mark" hidden>✓ Mark session done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="t-main">
+      ${state.profile && state.profile.age ? `<div class="age-tip">${P(AGE_NOTES[state.profile.age])}</div>`:""}
+      <div class="card"><h3><span class="h-ic">💡</span> Why it matters</h3><p style="margin:0">${P(d.why)}</p>
+        <div class="skill-tags" style="margin-top:12px">${skillChips}</div></div>
+      <div class="card"><h3><span class="h-ic">🎒</span> What you need</h3><div class="need">${d.need.map(x=>`<span class="chip">${P(x)}</span>`).join("")}</div>
+        <p class="small muted" style="margin:10px 0 0">Plan: <b>${need} session${need>1?"s":""} × ${mins} min</b> · ${P(d.reps)}. Spread sessions through the day.</p></div>
+      <div class="card"><h3><span class="h-ic">🪜</span> Step by step</h3><ol class="steps">${d.steps.map(s=>`<li>${P(s)}</li>`).join("")}</ol></div>
+      <div class="card"><h3><span class="h-ic">🎯</span> Ready to move on when…</h3><ul class="ticks">${d.success.map(s=>`<li>${P(s)}</li>`).join("")}</ul></div>
+      <div class="card"><h3><span class="h-ic">🛠️</span> Common mistakes & troubleshooting</h3><ul class="ticks warn">${d.mistakes.map(s=>`<li>${P(s)}</li>`).join("")}</ul>
+        <p class="small muted" style="margin:10px 0 0">Struggling? Make it easier: shorter time, less distance, a quieter room, or better treats. Then use “Repeat this day”.</p></div>
+      ${d.levelUp?`<div class="card levelup"><h3><span class="h-ic">🚀</span> Level-up challenge</h3><p style="margin:0">${P(d.levelUp)}</p></div>`:""}
+    </div>
+    <div class="t-bot">
+      <div class="card">
+        <h3><span class="h-ic">📝</span> How did it go?</h3>
+        <div class="rating">${[1,2,3].map(v=>`<button class="${r.r===v?"on":""}" data-act="rate" data-v="${v}"><span class="e">${RATINGS[v][0]}</span>${RATINGS[v][1]}</button>`).join("")}</div>
+        <label class="f" for="notes">Notes for Day ${n} <span class="saved" id="saved">Saved ✓</span></label>
+        <textarea id="notes" placeholder="What worked? What was tricky? Treats used, distractions, ${name}’s mood…">${esc(r.n)}</textarea>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">${masterBtns}</div>
+        <button class="btn ghost block" data-act="repeat" style="margin-top:12px">🔁 Repeat this day${isToday?" tomorrow":""}</button>
+        <p class="small muted" style="margin:6px 0 0">${isToday?"Saves today’s attempt to history and brings this lesson back tomorrow, shifting the rest of the program by a day.":"Saves this attempt to history and clears the check-offs so you can practice it again."}</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- Heatmap ---------- */
+function heatmap(){
+  const sch=schedInfo(), vd=viewDayNum();
+  let h=`<div class="heat" role="grid" aria-label="Program calendar">`;
+  for(let w=0; w<TOTAL/7; w++){
+    h+=`<div class="wk">W${w+1}</div>`;
+    for(let i=1;i<=7;i++){ const n=w*7+i, d=DAYS[n-1], st=status(n);
+      const isT = !sch.notStarted && !sch.finished && n===sch.day;
+      const tag = d.graduation?"🎓":d.review?"⭐":d.trick?"✨":"";
+      h+=`<button class="cell ${st} ${isT?"today":""}" data-act="open" data-n="${n}" title="Day ${n}: ${esc(d.title)} — ${STATUS_LABEL[st]}" aria-label="Day ${n}, ${STATUS_LABEL[st]}">${n}${tag?`<span class="tag">${tag}</span>`:""}</button>`; }
+  }
+  h+=`</div><div class="legend"><span><i style="background:var(--green)"></i>Done</span><span><i style="background:var(--amber)"></i>In progress</span><span><i style="background:var(--coral)"></i>Struggled</span><span><i style="background:#fff;border:1.5px dashed #D9CBB8"></i>Not done</span><span><i style="box-shadow:0 0 0 2px var(--navy)"></i>Today</span><span>⭐ Review ✨ Trick</span></div>`;
+  return h;
+}
+
+/* ---------- Program ---------- */
+function viewProgram(){
+  const sch=schedInfo(), comp=daysCompleted(), name=esc(dogName());
+  let h=`<h1 class="page-title">${name}’s 6-week program</h1><p class="page-sub">${TOTAL} days · ${comp} complete · ${sch.notStarted?"starts "+esc(fmtDate(state.profile.startDate)):sch.finished?"program finished 🎓":"you’re on Day "+sch.day}</p>
+  <div class="card"><h3><span class="h-ic">🗓️</span> Calendar <span class="spacer"></span><span class="small muted">Tap a day to open it</span></h3>${heatmap()}</div>`;
+  PHASES.forEach(ph=>{
+    const days=DAYS.filter(d=>d.week===ph.week), wc=days.filter(d=>isComplete(d.day)).length;
+    h+=`<div class="week"><div class="week-head"><div class="num" style="background:${ph.color}">${ph.week}</div><div style="flex:1;min-width:0"><h3>${esc(ph.name)}</h3><div class="small muted">${esc(ph.tag)}</div></div><span class="chip">${wc}/7</span></div>`;
+    days.forEach(d=>{ const st=status(d.day), isT=st==="today";
+      const sk = d.skill ? SKILL[d.skill].name : "";
+      const sub = d.review ? (d.combo?"Combines ":"Reviews ")+d.skills.length+" skills" : (d.title.toLowerCase().includes(sk.toLowerCase().split(" ")[0]) ? (d.trick?"Trick":SKILL[d.skill].cat) : sk);
+      h+=`<button class="day-row ${isT?"is-today":""}" data-act="open" data-n="${d.day}"><div class="dn">DAY<b>${d.day}</b></div><div class="em">${dayEmoji(d)}</div><div class="tt"><b>${P(d.title)}</b><span>${esc(sub)} · ${sessCount(d.day)}×${minutesFor(d.day)} min</span></div><span class="status ${st}">${STATUS_LABEL[st]}${st==="partial"?" "+doneCount(d.day)+"/"+sessCount(d.day):""}</span></button>`; });
+    h+=`</div>`;
+  });
+  return h;
+}
+
+/* ---------- Progress ---------- */
+function viewProgress(){
+  const name=esc(dogName()), comp=daysCompleted(), pct=Math.round(comp/TOTAL*100), st=streak(), best=bestStreak(), tot=totalSessions(), sch=schedInfo();
+  const mastered=SKILLS.filter(s=>state.mastered[s.id]).length;
+  const ratings={1:0,2:0,3:0}; Object.values(state.days).forEach(r=>{ if(r.r) ratings[r.r]++; });
+  const notes=Object.keys(state.days).map(Number).filter(k=>state.days[k].n && state.days[k].n.trim()).sort((a,b)=>b-a);
+  let h=`<h1 class="page-title">${name}’s progress</h1><p class="page-sub">${sch.notStarted?"Program starts "+esc(fmtDate(state.profile.startDate)):sch.finished?"Program complete — amazing work!":"Day "+sch.day+" of "+TOTAL}</p>
+  <div class="stats">
+    <div class="stat"><span class="e">🔥</span><div class="v">${st}</div><div class="l">Day streak${best>st?" · best "+best:""}</div></div>
+    <div class="stat"><span class="e">✅</span><div class="v">${tot}</div><div class="l">Total sessions</div></div>
+    <div class="stat"><span class="e">📅</span><div class="v">${comp}<span class="small muted">/${TOTAL}</span></div><div class="l">Days completed</div></div>
+    <div class="stat"><span class="e">📈</span><div class="v">${pct}%</div><div class="l">Program complete</div></div>
+  </div>
+  <div class="card"><div class="row" style="margin-bottom:8px"><b>Overall progress</b><span class="spacer"></span><span class="small muted">${mastered}/${SKILLS.length} skills mastered</span></div>
+    <div class="meter"><i style="width:${pct}%"></i></div>
+    <div class="row small muted" style="margin-top:10px;gap:14px"><span>😅 Struggled: <b>${ratings[1]}</b></span><span>🙂 Okay: <b>${ratings[2]}</b></span><span>🌟 Nailed it: <b>${ratings[3]}</b></span></div></div>
+  <div class="two-col"><div>
+    <div class="card"><h3><span class="h-ic">🗓️</span> Training calendar</h3>${heatmap()}</div>
+    <div class="card"><h3><span class="h-ic">📓</span> Training journal</h3>${notes.length?notes.slice(0,12).map(k=>{ const r=state.days[k]; return `<div class="journal-item"><b>Day ${k} · ${P(DAYS[k-1].title)}</b> ${r.r?RATINGS[r.r][0]:""}<p>${esc(r.n)}</p></div>`; }).join(""):`<div class="empty">No notes yet. Add notes on the Today tab after each day’s training.</div>`}</div>
+  </div><div>
+    <div class="card"><h3><span class="h-ic">🏅</span> Skills <span class="spacer"></span><span class="small muted">${mastered} mastered</span></h3>
+      ${SKILLS.map(s=>{ const ss=skillStatus(s.id); return `<div class="skill-row"><div class="em">${s.emoji}</div><div class="nm"><b>${esc(s.name)}</b><span>${ss==="mastered"?"⭐ Mastered "+esc(fmtDate(state.mastered[s.id],{month:"short",day:"numeric"})):ss==="practicing"?"🟡 Practicing":"⚪ Not started"} · ${esc(s.cat)}</span></div><button class="mbtn ${ss==="mastered"?"on":""}" data-act="master" data-id="${s.id}">${ss==="mastered"?"⭐ Mastered":"☆ Mastered?"}</button></div>`; }).join("")}
+    </div>
+  </div></div>`;
+  return h;
+}
+
+/* ---------- Skills library ---------- */
+let skillFilter = "All", skillQuery = "", openSkill = null;
+function lessonBlock(d){
+  return `<div class="lib-day"><h4><span class="chip p">Day ${d.day}</span>${P(d.title)}<span class="spacer"></span><button class="btn sec sm" data-act="open" data-n="${d.day}">Open day →</button></h4>
+    <div class="small"><b>Goal:</b> ${P(d.goal)} <span class="muted">· ${sessCount(d.day)} × ${minutesFor(d.day)} min</span></div>
+    <div class="sub">Steps</div><ol>${d.steps.map(s=>`<li>${P(s)}</li>`).join("")}</ol>
+    <div class="sub">Success looks like</div><ul class="ticks small">${d.success.map(s=>`<li>${P(s)}</li>`).join("")}</ul>
+    <div class="sub">Troubleshooting</div><ul class="ticks warn small">${d.mistakes.map(s=>`<li>${P(s)}</li>`).join("")}</ul>
+    ${d.levelUp?`<div class="sub">Level up</div><p class="small" style="margin:0">🚀 ${P(d.levelUp)}</p>`:""}</div>`;
+}
+function viewSkills(){
+  const name=esc(dogName());
+  const cats=["All",...CATS,"Mastered","Not mastered"];
+  let h=`<h1 class="page-title">Skills library</h1><p class="page-sub">${SKILLS.length} skills · everything ${name} will learn, with full instructions.</p>
+  <input type="search" id="skill-search" placeholder="🔍  Search skills, cues or steps (e.g. “door”, “leash”)" value="${esc(skillQuery)}" aria-label="Search skills">
+  <div class="filters">${cats.map(c=>`<button class="${skillFilter===c?"on":""}" data-act="filter" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div>
+  <details class="lib"><summary><div class="em">🧭</div><div class="nm"><b>Training basics</b><span>Force-free principles that make every skill easier</span></div><span class="chev">›</span></summary>
+    <div class="lib-body"><div class="basics">${BASICS.map(b=>`<div><b>${P(b[0])}</b>${P(b[1])}</div>`).join("")}</div></div></details>`;
+  SKILLS.forEach(s=>{
+    const lessons=DAYS.filter(d=>d.skill===s.id || (!d.review && d.skills.includes(s.id)));
+    const reviews=DAYS.filter(d=>d.review && d.skills.includes(s.id));
+    const ss=skillStatus(s.id);
+    const text=[s.name,s.cue,s.summary,s.why,s.cat,...lessons.map(d=>[d.title,d.goal,d.steps.join(" "),d.mistakes.join(" ")].join(" "))].join(" ").replace(/\{dog\}/g,dogName()).toLowerCase();
+    h+=`<details class="lib skill-card" data-id="${s.id}" data-cat="${esc(s.cat)}" data-m="${ss==="mastered"?1:0}" data-text="${esc(text)}" ${openSkill===s.id?"open":""}>
+      <summary><div class="em">${s.emoji}</div><div class="nm"><b>${esc(s.name)} ${ss==="mastered"?'<span class="chip g">⭐ Mastered</span>':""}</b><span>${P(s.summary)}</span></div><span class="chev">›</span></summary>
+      <div class="lib-body">
+        <div class="row" style="margin-bottom:8px"><span class="chip">${esc(s.cat)}</span><span class="chip p">Cue: ${P(s.cue)}</span></div>
+        <p style="margin:6px 0">${P(s.why)}</p>
+        <div class="row" style="margin-top:8px"><button class="mbtn ${ss==="mastered"?"on":""}" data-act="master" data-id="${s.id}">${ss==="mastered"?"⭐ Mastered":"☆ Mark as mastered"}</button>
+        ${reviews.length?`<span class="small muted">Reviewed on ${reviews.map(d=>`<a href="#today" data-act="open" data-n="${d.day}">Day ${d.day}</a>`).join(", ")}</span>`:""}</div>
+        ${lessons.map(lessonBlock).join("")}
+      </div></details>`;
+  });
+  h+=`<div class="empty" id="skill-empty" hidden>No skills match your search.</div>`;
+  return h;
+}
+function applySkillFilter(){
+  const q=skillQuery.trim().toLowerCase(); let shown=0;
+  document.querySelectorAll(".skill-card").forEach(el=>{
+    const okCat = skillFilter==="All" || (skillFilter==="Mastered"?el.dataset.m==="1": skillFilter==="Not mastered"?el.dataset.m==="0": el.dataset.cat===skillFilter);
+    const okQ = !q || q.split(/\s+/).every(w=>el.dataset.text.includes(w));
+    el.hidden = !(okCat && okQ); if(!el.hidden) shown++;
+  });
+  const e=$("#skill-empty"); if(e) e.hidden = shown>0;
+}
+
+/* ---------- Settings ---------- */
+function profileForm(p, isOnb){
+  p = p || {name:"",age:"",breed:"",startDate:todayStr()};
+  return `
+    <label class="f" for="f-name">Dog’s name</label>
+    <input type="text" id="f-name" maxlength="30" placeholder="e.g. Biscuit" value="${esc(p.name)}" autocomplete="off">
+    <label class="f">Age group</label>
+    <div class="seg" id="f-age">${Object.keys(AGES).map(k=>`<button type="button" class="${p.age===k?"on":""}" data-act="age" data-v="${k}"><span class="e">${AGES[k][0]}</span>${AGES[k][1]}<small class="muted" style="font-weight:600;font-size:.68rem">${AGES[k][2]}</small></button>`).join("")}</div>
+    <label class="f" for="f-breed">Breed <span class="muted" style="font-weight:600">(optional)</span></label>
+    <input type="text" id="f-breed" maxlength="40" placeholder="e.g. Labrador mix" value="${esc(p.breed||"")}">
+    <label class="f" for="f-start">Program start date</label>
+    <input type="date" id="f-start" value="${esc(p.startDate)}">
+    <p class="small muted" style="margin:6px 0 0">${isOnb?"Already started training? Pick an earlier date and the app will jump to the right day.":"Changing the start date moves which day is ‘today’. Your logged progress is kept."}</p>`;
+}
+function readProfileForm(){
+  const name=$("#f-name").value.trim(), ageBtn=$("#f-age .on"), breed=$("#f-breed").value.trim(), start=$("#f-start").value;
+  if(!name){ toast("Please enter your dog’s name 🐶"); $("#f-name").focus(); return null; }
+  if(!ageBtn){ toast("Please choose an age group"); return null; }
+  if(!isValidDate(start)){ toast("Please choose a valid start date"); return null; }
+  return {name, age:ageBtn.dataset.v, breed, startDate:start};
+}
+function viewSettings(){
+  const p=state.profile;
+  return `<h1 class="page-title">Settings</h1><p class="page-sub">Update ${esc(dogName())}’s profile and manage your data.</p>
+  <div class="two-col"><div>
+  <div class="card"><h3><span class="h-ic">🐶</span> Dog profile</h3>${profileForm(p,false)}
+    <button class="btn block" data-act="save-profile" style="margin-top:16px">Save profile</button></div>
+  </div><div>
+  <div class="card"><h3><span class="h-ic">🎛️</span> Preferences</h3>
+    <label class="f" for="f-spd">Sessions per day</label>
+    <select id="f-spd"><option value="0" ${state.spd===0?"selected":""}>Follow the program (1–3 per day)</option>${[1,2,3,4,5].map(v=>`<option value="${v}" ${state.spd===v?"selected":""}>${v} every day</option>`).join("")}</select>
+    <label class="row" style="margin-top:14px;gap:10px;font-weight:700"><input type="checkbox" id="f-sound" ${state.sound?"checked":""} style="width:22px;height:22px;accent-color:var(--primary)"> Timer sound when a session ends</label>
+    ${state.repeats.length?`<p class="small muted" style="margin:12px 0 0">Schedule shifted by <b>${shiftCount()}</b> repeat day(s). <button class="btn ghost sm" data-act="clear-repeats">Undo shifts</button></p>`:""}
+  </div>
+  <div class="card"><h3><span class="h-ic">💾</span> Your data</h3>
+    <p class="small muted" style="margin-top:0">Progress is saved automatically in this browser only. Export a backup to move it to another device or browser.</p>
+    <div class="row"><button class="btn sec" data-act="export">⬇️ Export JSON</button><button class="btn sec" data-act="import">⬆️ Import JSON</button>
+    <input type="file" id="import-file" accept="application/json,.json" hidden></div>
+    <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+    <button class="btn danger block" data-act="reset">🗑️ Reset all data</button>
+  </div>
+  <div class="card"><h3><span class="h-ic">ℹ️</span> About</h3>
+    <p class="small" style="margin:0">PawSteps uses positive-reinforcement, force-free methods: reward what you want, manage what you don’t, and never use pain or fear. It’s a general guide — for aggression, severe fear, or separation anxiety, please work with a certified force-free trainer or veterinary behaviorist.</p>
+    <p class="small muted" style="margin:8px 0 0">Tip: on a phone, use your browser’s “Add to Home Screen” for one-tap access.</p></div>
+  </div></div>`;
+}
+function viewOnboarding(){
+  return `<div class="onb"><div class="card">
+    <div class="hero-emoji">🐕‍🦺</div><h1>Welcome to PawSteps</h1>
+    <p class="lead">A 6-week, positive-reinforcement training plan — a few short sessions a day.</p>
+    ${profileForm(null,true)}
+    <button class="btn block" data-act="onb-save" style="margin-top:18px">Start training 🐾</button>
+    ${storageOK?"":`<p class="small" style="color:var(--coral)">⚠️ This browser is blocking local storage, so progress won’t be saved.</p>`}
+  </div></div>`;
+}
+
+/* ---------- Render ---------- */
+function render(){
+  const root=$("#app");
+  if(!state.profile){ root.innerHTML=viewOnboarding()+`<div class="toast" id="toast" role="status"></div>`; document.title="PawSteps · Daily Dog Training"; return; }
+  readRoute();
+  const name=esc(dogName()), st=streak();
+  const navBtns = cls => ROUTES.map(r=>`<button class="${route===r[0]?"active":""}" data-act="nav" data-r="${r[0]}" aria-current="${route===r[0]?"page":"false"}"><span class="ic">${r[1]}</span>${r[2]}</button>`).join("");
+  let body = route==="program"?viewProgram(): route==="progress"?viewProgress(): route==="skills"?viewSkills(): route==="settings"?viewSettings(): viewToday();
+  root.innerHTML = `<div class="app">
+    <header class="topbar"><div class="topbar-inner">
+      <div class="brand"><div class="logo">🐾</div><div>PawSteps<small>Training with ${name}</small></div></div>
+      <nav class="topnav" aria-label="Main">${navBtns()}</nav>
+      <div class="streak-pill" title="Day streak">🔥 ${st}</div>
+    </div></header>
+    <main class="main">${storageOK?"":`<div class="banner warm">⚠️ <div>Local storage is unavailable, so progress won’t be saved after you close this page.</div></div>`}${body}
+      <p class="footer-note">🐾 PawSteps · progress is saved in this browser</p></main>
+    <nav class="nav" aria-label="Main">${navBtns()}</nav>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>`;
+  document.title = `${dogName()}’s Training · PawSteps`;
+  if(route==="today") updateTimer();
+  if(route==="skills") applySkillFilter();
+}
+function rerenderKeepScroll(){ const y=window.scrollY; render(); window.scrollTo(0,y); }
+
+/* ---------- Actions ---------- */
+function toggleSession(i){
+  const n=viewDayNum(), need=sessCount(n), r=getRec(n,true), was=isComplete(n);
+  if(r.s[i]){ r.s[i]=false; const dt=r.sd[i]; if(dt && state.activity[dt]>0){ state.activity[dt]--; if(!state.activity[dt]) delete state.activity[dt]; } r.sd[i]=null; }
+  else { r.s[i]=true; const t=todayStr(); r.sd[i]=t; state.activity[t]=(state.activity[t]||0)+1; }
+  save(); rerenderKeepScroll();
+  if(!was && isComplete(n)){ confetti(); toast(`🎉 Day ${n} complete! Great work, ${dogName()}!`); }
+  else if(r.s[i]) toast(`✅ Session ${i+1} logged`);
+}
+function repeatDay(){
+  const n=viewDayNum(), sch=schedInfo(), isToday=!sch.notStarted && !sch.finished && n===sch.day, r=getRec(n,true), t=todayStr();
+  const msg = isToday ? `Repeat Day ${n} tomorrow?\n\nToday’s check-offs and rating are saved to history, and Day ${n} will come up again tomorrow (the rest of the program shifts by one day).`
+                      : `Repeat Day ${n}?\n\nThis attempt is saved to history and the check-offs are cleared so you can practice it again.`;
+  if(!confirm(msg)) return;
+  r.hist.push({date:t, s:r.s.filter(Boolean).length, r:r.r});
+  r.s=[]; r.sd=[]; r.r=0;
+  if(isToday && !state.repeats.includes(t)) state.repeats.push(t);
+  save(); rerenderKeepScroll(); toast(isToday?`🔁 Day ${n} will come up again tomorrow`:`🔁 Day ${n} reset — practice again anytime`);
+}
+function exportData(){
+  const data={app:"PawSteps", version:1, exportedAt:new Date().toISOString(), state};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download=`${dogName().replace(/[^\w-]+/g,"_")}-training-progress-${todayStr()}.json`;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
+  toast("⬇️ Backup downloaded");
+}
+function importData(file){
+  const fr=new FileReader();
+  fr.onload=()=>{ try{
+      const o=JSON.parse(fr.result), s=o && o.state ? o.state : o;
+      if(!s || typeof s!=="object" || !s.profile || typeof s.days!=="object") throw new Error("bad");
+      const ns=normalize(s); if(!ns.profile) throw new Error("bad");
+      if(!confirm(`Import progress for ${ns.profile.name}? This replaces the current data in this browser.`)) return;
+      state=ns; save(); viewDay=null; timer.day=null; toast("✅ Progress imported"); go("today");
+    }catch(e){ toast("⚠️ That file isn’t a valid PawSteps backup"); } };
+  fr.readAsText(file);
+}
+
+document.addEventListener("click", e=>{
+  const el=e.target.closest("[data-act]"); if(!el) return;
+  const a=el.dataset.act;
+  if(el.tagName==="A") e.preventDefault();
+  switch(a){
+    case "nav": if(el.dataset.r==="today") viewDay=null; go(el.dataset.r); break;
+    case "prev": viewDay=Math.max(1,viewDayNum()-1); rerenderKeepScroll(); break;
+    case "next": viewDay=Math.min(TOTAL,viewDayNum()+1); rerenderKeepScroll(); break;
+    case "today": viewDay=null; render(); window.scrollTo(0,0); break;
+    case "open": openDay(Number(el.dataset.n)); break;
+    case "sess": toggleSession(Number(el.dataset.i)); break;
+    case "rate": { const n=viewDayNum(), r=getRec(n,true), v=Number(el.dataset.v); r.r = r.r===v?0:v; save(); rerenderKeepScroll(); if(r.r===1) toast("That’s okay! Make it easier next time, or repeat this day 💛"); else if(r.r===3) toast("🌟 Awesome — "+dogName()+" nailed it!"); break; }
+    case "master": { const id=el.dataset.id; if(state.mastered[id]) delete state.mastered[id]; else { state.mastered[id]=todayStr(); toast(`⭐ ${SKILL[id].name} mastered!`); }
+      save(); if(route==="skills"){ openSkill=id; } rerenderKeepScroll(); break; }
+    case "repeat": repeatDay(); break;
+    case "skill": openSkill=el.dataset.id; skillFilter="All"; skillQuery=""; go("skills"); setTimeout(()=>{ const c=document.querySelector(`.skill-card[data-id="${openSkill}"]`); if(c) c.scrollIntoView({block:"start"}); },30); break;
+    case "tm-toggle": timerToggle(); break;
+    case "tm-reset": timerReset(viewDayNum()); break;
+    case "tm-add": timerAdd(Number(el.dataset.s)); break;
+    case "tm-mark": { const n=viewDayNum(), r=getRec(n,true); for(let i=0;i<sessCount(n);i++){ if(!r.s[i]){ timer.done=false; timer.remain=timer.total; toggleSession(i); break; } } break; }
+    case "filter": skillFilter=el.dataset.c; document.querySelectorAll(".filters button").forEach(b=>b.classList.toggle("on",b===el)); applySkillFilter(); break;
+    case "age": el.parentElement.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b===el)); break;
+    case "onb-save": { const p=readProfileForm(); if(!p) return; state.profile=p; save(); viewDay=null; location.hash="today"; render(); window.scrollTo(0,0); setTimeout(()=>toast(`Welcome, ${p.name}! 🐾 Let’s get started.`),50); break; }
+    case "save-profile": { const p=readProfileForm(); if(!p) return; state.profile=p; save(); viewDay=null; timer.day=null; rerenderKeepScroll(); toast("✅ Profile saved"); break; }
+    case "clear-repeats": if(confirm("Undo all schedule shifts from repeated days?")){ state.repeats=[]; save(); rerenderKeepScroll(); toast("Schedule reset"); } break;
+    case "export": exportData(); break;
+    case "import": $("#import-file").click(); break;
+    case "reset": if(confirm(`Reset ALL data for ${dogName()}? This deletes the profile, every check-off, rating and note in this browser. This can’t be undone.\n\nTip: export a backup first.`)){
+        try{ localStorage.removeItem(KEY); }catch(err){} state=defaults(); viewDay=null; timer.day=null; clearInterval(timer.iv); timer.running=false; location.hash=""; render(); } break;
+  }
+});
+let noteTimer;
+document.addEventListener("input", e=>{
+  if(e.target.id==="notes"){ const n=viewDayNum(); clearTimeout(noteTimer); const val=e.target.value;
+    noteTimer=setTimeout(()=>{ getRec(n,true).n=val; save(); const s=$("#saved"); if(s){ s.classList.add("show"); setTimeout(()=>s.classList.remove("show"),1200); } },350); }
+  if(e.target.id==="skill-search"){ skillQuery=e.target.value; applySkillFilter(); }
+});
+document.addEventListener("change", e=>{
+  if(e.target.id==="f-spd"){ state.spd=Number(e.target.value)||0; save(); toast("✅ Sessions per day updated"); }
+  if(e.target.id==="f-sound"){ state.sound=e.target.checked; save(); }
+  if(e.target.id==="import-file" && e.target.files[0]){ importData(e.target.files[0]); e.target.value=""; }
+});
+document.addEventListener("toggle", e=>{ if(e.target.classList && e.target.classList.contains("skill-card") && e.target.open) openSkill=e.target.dataset.id; }, true);
+window.addEventListener("hashchange", ()=>{ render(); });
+window.addEventListener("storage", e=>{ if(e.key===KEY){ state=load(); render(); } });
+/* refresh when the date changes (e.g. app left open overnight) */
+let lastDay=todayStr();
+setInterval(()=>{ if(todayStr()!==lastDay){ lastDay=todayStr(); if(!timer.running) render(); } }, 60000);
+document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && todayStr()!==lastDay){ lastDay=todayStr(); render(); } });
+
+render();
+})();
+
+</script>
+<script>
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+  navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(function () {});
+}
+</script>
+</body>
+</html>
